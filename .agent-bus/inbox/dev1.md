@@ -1,21 +1,19 @@
 # Inbox — dev1
 
-    task:   none
-    state:  STANDBY
+    task:   T-000
+    state:  ASSIGNED
     issued: 2026-09-05
 
 ## Task
 
-No task assigned yet. Keep watching this file.
-
-When the orchestrator assigns work, this file is replaced with a task block:
-the task id, the exact files you own for it, what to build, and how the
-orchestrator will verify it. Nothing outside that file list is yours to touch.
+Channel smoke test. Confirm the bus works before real work is dispatched.
+Do not write any code. Just prove you received this and can report back.
 
 ## Files you own for this task
 
-(none yet)
+- `.agent-bus/status/dev1.md`
 
 ## Done when
 
-(nothing yet)
+Your status file says `state: DONE`, `task: T-000`, and names the IDE you are
+running in, so the orchestrator knows which teammate is on which slot.
