@@ -1,3 +1,27 @@
+/* Geist + JetBrains Mono are the two families Krypsm actually renders.
+   Loaded from Google Fonts rather than @fontsource so no npm dependency is
+   added — and unlike Krypsm's build, real 500/600 weights are requested, so
+   headings are a true cut rather than browser-synthesised faux bold. */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background: theme("colors.slate.50");
+    color: theme("colors.slate.900");
+    font-weight: 400;
+  }
+  h1, h2, h3 {
+    font-weight: 600;
+    letter-spacing: -0.011em;
+  }
+  code, pre {
+    font-family: theme("fontFamily.mono");
+  }
+}

@@ -1,5 +1,14 @@
 # Design Tokens
 
+<!-- DEVIATION 2026-09-05: superseded on the human's instruction. The UI now uses
+     the Krypsm platform's design tokens (~/krypsm/docs/theme.md), taking the
+     values that file records as actually painting (its styles/tokens.css layer,
+     which wins the cascade) rather than the superseded ones. The palette below
+     is kept for provenance; frontend/tailwind.config.js is the live source.
+     One deliberate departure from Krypsm: its docs flag white-on-#FCBD31 at
+     1.68:1, below WCAG AA, so text on the yellow accent uses #1C1B1A (12.5:1)
+     instead of white. -->
+
 Tailwind config extension (`frontend/tailwind.config.js`) — copy directly, don't re-derive:
 
 ```js
