@@ -2,7 +2,7 @@
 
     task:   none
     state:  STANDBY
-    issued: 2026-09-05
+    issued: 2026-09-05 (race probe)
 
 ## Task
 
