@@ -1,61 +1,74 @@
 # Inbox — dev2
 
-    task:   T-001
+    task:   T-001 (REVISED — the product changed since this was first issued)
     state:  ASSIGNED
     issued: 2026-09-05
 
-## Context
+## Read this first
 
-The MVP is built and working. A security audit just landed — read
-`docs/GAP_ANALYSIS.md` and `.agent-bus/STATE.md` before you start. Contract suite is
-19 passing.
+The product gained two whole screens since your task was written. Pull before you
+start, then read `docs/00_WHAT_WE_BUILT.md` and `docs/03_REAL_WORLD_PRODUCT_SCENARIO.md`.
+There are now **five** tabs, not three: Admin, Identities, User, Verify, Audit.
 
-Two things are being changed right now by others: `contracts-app/` (me) and
-`frontend/src/components/` (dev1). **Touch neither.** Your task needs no code changes
-at all.
+Contract suite is 45 passing. Browser checks 18/18.
 
-## Task — gap B-2/B-3: prove a cold boot, and write the demo runbook
+Others are working in `contracts-app/` (me) and `frontend/src/components/AdminDashboard.tsx`
+plus `frontend/src/components/admin/` (dev1). Touch none of those. Your task needs no
+code changes.
 
-Two halves.
+## Task — half 1: cold-boot portability proof
 
-**Half 1 — portability proof.** `build/01-product/NON_FUNCTIONAL_REQUIREMENTS.md`
-NFR-7 requires this to run on any teammate's machine. Nobody has proven that on a
-second machine yet. On YOUR machine, from a fresh clone, follow
-`build/10-operations/LOCAL_DEVELOPMENT.md` exactly and record what actually happens:
+NFR-7 says this must run on any teammate's machine, and nobody has proven that on a
+second machine. From a fresh clone on YOUR machine, follow
+`build/10-operations/LOCAL_DEVELOPMENT.md` exactly. Record: your OS, Node and npm
+versions, every command, whether it worked first time, anything that failed, and how
+long a cold boot takes. If a documented step is wrong, that is a finding — write it in
+your status file. Do not edit `build/`; it is off-limits to you.
 
-- your OS, Node version, npm version
-- every command you ran and whether it worked first time
-- anything that failed, and what you did about it
-- how long a cold boot takes end to end
+## Task — half 2: `docs/DEMO_RUNBOOK.md`
 
-If a documented step is wrong or missing, that is a finding — write it down. Do not
-silently fix the doc; `build/` is off-limits to you. Report it and I will fix it.
+A one-page script a nervous human can follow under pressure. Time it to 5-7 minutes.
 
-**Half 2 — the demo runbook.** Write `docs/DEMO_RUNBOOK.md`: the exact judge-facing
-sequence, as a script a nervous human can follow under pressure. It must cover:
+The single most important change: **we can now show FOUR distinct on-chain refusals,
+not one.** Four different mechanisms refusing four different things is a far stronger
+security story than one rejection repeated. Build the script around that.
 
-1. The problem — why centralised IAM fails (one sentence, not a lecture)
-2. Boot state: which terminals, which tab, which account selected
-3. Admin registers an identity and mints an asset — exact clicks, exact values to type
-4. Switch to Carol, click Try Admin Action, the rejection banner — **this is the
-   moment the demo turns on**; write the exact words to say while it is on screen
-5. The Audit Trail, and why the rejected attempt does NOT appear (a revert rolls back
-   its own events — say so before a judge asks)
-6. Recovery steps if something breaks live: node died, page blank, stale state
+1. **The problem** (~30s). One sentence on why a database-backed custody record fails:
+   whoever can write to the database can grant themselves a role, move an asset, and
+   edit the log that would have shown it. Use the contractor incident in
+   `docs/03_REAL_WORLD_PRODUCT_SCENARIO.md`.
+2. **Issue an asset** (~1m). Admin tab, mint to a registered identity, tx hash appears.
+3. **Prove control** (~1m). Identities tab, acting as Carol, "Prove I control" — she
+   signs a one-time challenge. Say why this beats trusting an address: anyone can type
+   an address, only the key holder can produce a signature. Note the challenge is now
+   spent and cannot be replayed.
+4. **Verify** (~1m30). Verify tab, asset #0 → genuine, holder, holder status, issue
+   date. Then paste the custody document → authentic. Then change one word in it
+   (RESTRICTED → UNCLASSIFIED) → **fails**. This is the strongest single moment in the
+   demo; give it room and let the red banner sit on screen.
+5. **The four refusals** (~1m30). In this order, because each uses a different
+   mechanism: non-admin cannot mint (role check) · non-admin cannot suspend an identity
+   (role check on a different contract) · suspended identity cannot receive an asset
+   (lifecycle enforcement) · tampered document fails (cryptographic integrity).
+6. **Audit trail** (~30s). Every action is there. Then the point judges miss unless you
+   say it: **the rejected attempts are NOT there**, because a reverted transaction rolls
+   back its own events. Say it before someone asks.
+7. **Why blockchain** (~30s). A database could draw every one of these screens. What it
+   cannot do is be trustworthy to someone who does not trust its operator. That is why
+   the verification screen needs no login.
 
-Keep it to one page a person can hold. Mark timings so the whole thing fits 3-5 minutes.
+Also include: exact values to type, which account to select at each step, and recovery
+steps if the node dies mid-demo.
 
-## Files you own for this task
+## Files you own
 
-- `docs/DEMO_RUNBOOK.md` (new — yours to create)
+- `docs/DEMO_RUNBOOK.md` (new)
 - `.agent-bus/status/dev2.md`
 
-Nothing else. `build/`, `contracts-app/`, and `frontend/` are all off-limits for T-001.
+Nothing else.
 
 ## Done when
 
-- `docs/DEMO_RUNBOOK.md` is merged to `main`
-- Your status file reports the cold-boot result: machine spec, whether it worked
-  first time, and every discrepancy you found in the documented steps
-- Be honest if something failed. A failed cold boot found now is worth far more than
-  a clean report that hides it.
+Merged to `main`, and your status reports the cold-boot result honestly — machine spec,
+whether it worked first time, and every discrepancy found. A failed cold boot discovered
+now is worth far more than a clean report that hides one.
