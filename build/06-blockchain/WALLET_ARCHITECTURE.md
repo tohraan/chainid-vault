@@ -24,8 +24,29 @@ export const ACCOUNTS = [
 import { ethers } from "ethers";
 import { provider } from "./provider";
 
-export function getSignerFor(privateKey: string) {
-  return new ethers.Wallet(privateKey, provider);
+// DEVIATION 2026-09-05: a bare `new ethers.Wallet(pk, provider)` here breaks the
+// SECOND write from any account with "nonce has already been used" — the signer
+// re-reads its nonce from the provider each send, and JsonRpcProvider serves
+// that from a cache tied to its 4s-polled chain head. Reproduced with a 5s gap
+// between clicks, so demo pacing does not save you. Cache one NonceManager per
+// key instead. See 02-planning/PHASE_03.md "Phase 4 verification".
+const signerCache = new Map<string, ethers.NonceManager>();
+
+export function getSignerFor(privateKey: string): ethers.NonceManager {
+  let signer = signerCache.get(privateKey);
+  if (!signer) {
+    signer = new ethers.NonceManager(new ethers.Wallet(privateKey, provider));
+    signerCache.set(privateKey, signer);
+  }
+  return signer;
+}
+
+// NonceManager increments BEFORE the gas estimate, so a reverting call (i.e. the
+// whole Journey 2 rejection demo) leaves the counter one ahead and the account's
+// next write dies with "nonce too high". Every write path must call this in its
+// catch block.
+export function resetSignerNonce(privateKey: string): void {
+  signerCache.get(privateKey)?.reset();
 }
 
 export function getIdentityRegistry(signerOrProvider: ethers.Signer | ethers.Provider) {

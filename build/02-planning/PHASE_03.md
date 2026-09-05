@@ -1,6 +1,6 @@
 # Phase 3+4 — Deploy, Seed, Frontend (Hour 4–9)
 
-**Status: Phase 3 complete (2026-09-05). Phase 4 not started.**
+**Status: Phase 3 and Phase 4 complete (2026-09-05). All 6 checklist items verified in a real browser.**
 
 Deployed addresses, deterministic on every `hardhat node` restart:
 
@@ -40,7 +40,24 @@ See `04-design/PAGE_STRUCTURE.md` for screen layout, `03-architecture/FRONTEND_A
 
 - [x] Contracts deployed to local node, addresses captured in frontend config
 - [x] 4 accounts seeded with correct roles + labels, 1 demo asset pre-minted (verified on-chain: all 4 hold their role on **both** contracts; 3 registered identities as specified; token 0 "Field Radio Unit 001" owned by Carol)
-- [ ] Admin Dashboard: register, mint, assign role all work end-to-end from UI
-- [ ] User View: shows correct owned assets per active account
-- [ ] Rejected-action flow shows revert reason on screen, not just in browser console
-- [ ] Audit Trail updates live within 2s of a new on-chain action, no manual refresh needed
+- [x] Admin Dashboard: register, mint, assign role all work end-to-end from UI
+- [x] User View: shows correct owned assets per active account
+- [x] Rejected-action flow shows revert reason on screen, not just in browser console
+- [x] Audit Trail updates live within 2s of a new on-chain action, no manual refresh needed
+
+
+## Phase 4 verification (2026-09-05)
+
+Driven headlessly in real Chrome against a freshly restarted node, all three journeys from `01-product/USER_JOURNEYS.md`, **19/19 checks, zero console errors**:
+
+- Journey 1 — Admin mints from the Admin Dashboard, toast confirms with the tx hash, the new asset appears in the Audit Trail.
+- Journey 2 — switch "Acting as" to Carol (USER), click "Try Admin Action", the full-width banner renders `0x90F7…b906 does not hold ADMIN_ROLE` with the actor address and role badge.
+- Journey 3 — Audit Trail lists every event across both contracts with block, action badge, subject, details and tx hash.
+
+### One demo-breaking bug found and fixed here
+
+`06-blockchain/WALLET_ARCHITECTURE.md` shows `getSignerFor` returning a bare `new ethers.Wallet(pk, provider)`. That signer asks the provider for its nonce on every send, and `JsonRpcProvider` answers from a cache tied to its 4-second-polled view of the chain head. The result: **the second write from the same account fails with "nonce has already been used"** — reproduced even with a 5 second gap between clicks, so ordinary demo pacing does not avoid it. Journey 1 is register-then-mint from the Admin account, so the demo broke on its opening beat.
+
+Fixed by caching one `ethers.NonceManager` per key in `frontend/src/lib/contracts.ts`. NonceManager also increments its counter *before* the gas estimate runs, so a deliberately-reverting call (the entire Journey 2 demo) leaves it one ahead — every write path therefore calls `resetSignerNonce` on failure. Without that, running the rejection demo would break the next write from whichever account ran it.
+
+`06-blockchain/WALLET_ARCHITECTURE.md` has been updated with the corrected pattern.
