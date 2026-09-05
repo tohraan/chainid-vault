@@ -2,19 +2,24 @@ import { useCallback, useEffect, useState } from "react";
 import AccountSwitcher from "./components/AccountSwitcher";
 import AdminDashboard from "./components/AdminDashboard";
 import AuditTrail from "./components/AuditTrail";
+import IdentityCentre from "./components/IdentityCentre";
 import RevertDisplay from "./components/RevertDisplay";
 import type { RevertInfo } from "./components/RevertDisplay";
 import ToastStack from "./components/Toast";
 import UserView from "./components/UserView";
+import VerifyAsset from "./components/VerifyAsset";
 import { ActiveAccountProvider } from "./context/ActiveAccountContext";
 import { isNodeReachable } from "./lib/provider";
 import { useToasts } from "./lib/useToasts";
 
-type Screen = "admin" | "user" | "audit";
+type Screen = "admin" | "identity" | "user" | "verify" | "audit";
 
+// Ordered as the demo walks them: issue -> govern -> hold -> verify -> audit.
 const TABS: Array<{ id: Screen; label: string }> = [
   { id: "admin", label: "Admin" },
+  { id: "identity", label: "Identities" },
   { id: "user", label: "User" },
+  { id: "verify", label: "Verify" },
   { id: "audit", label: "Audit" },
 ];
 
@@ -90,7 +95,9 @@ function Shell() {
       <main className="mx-auto max-w-7xl px-6 py-8">
         {revert && <RevertDisplay info={revert} onDismiss={() => setRevert(null)} />}
         {screen === "admin" && <AdminDashboard {...screenProps} />}
+        {screen === "identity" && <IdentityCentre {...screenProps} />}
         {screen === "user" && <UserView {...screenProps} />}
+        {screen === "verify" && <VerifyAsset />}
         {screen === "audit" && <AuditTrail refreshKey={refreshKey} />}
       </main>
 
