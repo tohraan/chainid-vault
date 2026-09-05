@@ -9,6 +9,11 @@ const config: HardhatUserConfig = {
     version: "0.8.24",
     settings: {
       optimizer: { enabled: true, runs: 200 },
+      // OpenZeppelin v5.6.1's utils/Bytes.sol uses the `mcopy` opcode, which is
+      // Cancun-only. solc 0.8.24 still defaults to the Paris EVM target, so
+      // without this the OZ dependency fails to compile with
+      // `DeclarationError: Function "mcopy" not found.`
+      evmVersion: "cancun",
     },
   },
   networks: {

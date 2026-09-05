@@ -1,5 +1,10 @@
 # Phase 2 — Smart Contracts (Hour 1–4)
 
+**Status: complete (2026-09-05). 11/11 tests passing.**
+
+<!-- DEVIATION 2026-09-05: task 4 (stretch transferAsset) was built in this phase, as PHASE_02 task 4 lists it. Note that 01-product/MVP_SCOPE.md gates stretch item 10 on items 1-9 being done AND demo-rehearsed, which is a stricter gate than this file's "only after 1-3 tested" — the two files disagree. It is built and covered by 3 passing tests; flagged for the human rather than silently kept or silently dropped. -->
+<!-- DEVIATION 2026-09-05: hardhat.config.ts sets evmVersion "cancun". OZ 5.6.1's utils/Bytes.sol uses the mcopy opcode; solc 0.8.24 still targets Paris by default and fails with `DeclarationError: Function "mcopy" not found.` See 09-engineering/TECH_STACK.md. -->
+
 Full spec lives in `07-smart-contracts/CONTRACT_SPECIFICATION.md` — this file is the task breakdown/order, not the spec itself.
 
 ## Tasks, in order
@@ -14,8 +19,8 @@ Full spec lives in `07-smart-contracts/CONTRACT_SPECIFICATION.md` — this file 
 
 ## Checklist
 
-- [ ] `IdentityRegistry.sol` compiles, `registerIdentity` + `getAllIdentities` + `isRegistered` all work per tests
-- [ ] `AssetNFT.sol` compiles, `mintAsset` + `tokensOfOwner` work per tests
-- [ ] Non-admin mint attempt reverts with readable reason (manually verify the exact string OpenZeppelin returns, or override with a custom `require` message — see `07-smart-contracts/SECURITY_CONSIDERATIONS.md`)
-- [ ] Min 6 tests passing (see `07-smart-contracts/TESTING_STRATEGY.md` for the list)
-- [ ] Events emit correctly (assert in tests via `expect(tx).to.emit(...)`)
+- [x] `IdentityRegistry.sol` compiles, `registerIdentity` + `getAllIdentities` + `isRegistered` all work per tests
+- [x] `AssetNFT.sol` compiles, `mintAsset` + `tokensOfOwner` work per tests
+- [x] Non-admin mint attempt reverts with readable reason (manually verify the exact string OpenZeppelin returns, or override with a custom `require` message — see `07-smart-contracts/SECURITY_CONSIDERATIONS.md`)
+- [x] Min 6 tests passing (11 passing) (see `07-smart-contracts/TESTING_STRATEGY.md` for the list)
+- [x] Events emit correctly (assert in tests via `expect(tx).to.emit(...)`)
