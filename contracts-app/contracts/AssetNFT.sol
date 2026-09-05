@@ -51,11 +51,42 @@ contract AssetNFT is ERC721Enumerable, AccessControl {
     }
 
     // --- Stretch: transfer (MVP_SCOPE item 10) ---
+    /// @notice Policy-checked transfer. The recipient-registration check and the
+    ///         AssetTransferred audit event are NOT here — they live in _update,
+    ///         so that they also cover raw transferFrom/safeTransferFrom.
     function transferAsset(address from, address to, uint256 tokenId) external {
         require(msg.sender == ownerOf(tokenId) || hasRole(ADMIN_ROLE, msg.sender), "Not authorized");
-        require(identityRegistry.isRegistered(to), "Recipient not registered");
         _transfer(from, to, tokenId);
-        emit AssetTransferred(from, to, tokenId);
+    }
+
+    /// @dev THE identity invariant, enforced at the single chokepoint.
+    ///
+    ///      SECURITY (2026-09-05 audit, finding G-1): the registration check and
+    ///      the audit event used to live in transferAsset() alone. But this
+    ///      contract inherits ERC721Enumerable, whose public transferFrom and
+    ///      safeTransferFrom are entirely separate entry points. A holder — or any
+    ///      address they had approved — could therefore move an asset to an
+    ///      address the registry had never heard of, and because the Audit Trail
+    ///      filters raw ERC-721 Transfer events, that movement left no trace in
+    ///      the audit log at all. Three executed probes confirmed it.
+    ///
+    ///      Every mint, transfer and burn in OpenZeppelin v5 funnels through
+    ///      _update, so enforcing here closes all entry points at once, including
+    ///      any added later. Mints (from == 0) are already gated by mintAsset;
+    ///      burns (to == 0) stay permitted.
+    function _update(address to, uint256 tokenId, address auth)
+        internal
+        override(ERC721Enumerable)
+        returns (address)
+    {
+        address from = super._update(to, tokenId, auth);
+
+        if (from != address(0) && to != address(0)) {
+            require(identityRegistry.isRegistered(to), "Recipient not registered");
+            emit AssetTransferred(from, to, tokenId);
+        }
+
+        return from;
     }
 
     /// @dev Required: ERC721Enumerable and AccessControl both reach ERC165's
