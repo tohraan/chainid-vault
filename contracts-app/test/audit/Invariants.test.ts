@@ -30,7 +30,7 @@ describe("SECURITY: identity invariant on all transfer paths", function () {
       asset.connect(carol)["transferFrom(address,address,uint256)"](
         carol.address, mallory.address, 0,
       ),
-    ).to.be.revertedWith("Recipient not registered");
+    ).to.be.revertedWith("Recipient not an active identity");
 
     expect(await asset.ownerOf(0)).to.equal(carol.address);
   });
@@ -41,7 +41,7 @@ describe("SECURITY: identity invariant on all transfer paths", function () {
       asset.connect(carol)["safeTransferFrom(address,address,uint256)"](
         carol.address, mallory.address, 0,
       ),
-    ).to.be.revertedWith("Recipient not registered");
+    ).to.be.revertedWith("Recipient not an active identity");
   });
 
   it("T-3: an approved third party cannot drain to an unregistered address", async function () {
@@ -52,7 +52,7 @@ describe("SECURITY: identity invariant on all transfer paths", function () {
       asset.connect(mallory)["transferFrom(address,address,uint256)"](
         carol.address, mallory.address, 0,
       ),
-    ).to.be.revertedWith("Recipient not registered");
+    ).to.be.revertedWith("Recipient not an active identity");
 
     expect(await asset.ownerOf(0)).to.equal(carol.address);
   });

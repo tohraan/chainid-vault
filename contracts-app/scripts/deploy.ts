@@ -23,6 +23,16 @@ const SEED_IDENTITIES = [
 // Pre-minted so the User View has something to show on the demo's first click.
 const DEMO_ASSET = { ownerIndex: 3, label: "Field Radio Unit 001" };
 
+// Stands in for the real off-chain custody record. Only its hash goes on-chain:
+// the contents stay off-chain, so no sensitive asset data is published, but any
+// verifier can still prove a document is byte-for-byte the one registered.
+const DEMO_ASSET_DOCUMENT = JSON.stringify({
+  serial: "BEL-RF-2026-00417",
+  model: "Field Radio Unit",
+  classification: "RESTRICTED",
+  issuedBy: "Bharat Electronics Limited",
+});
+
 async function main() {
   const signers = await ethers.getSigners();
   const deployer = signers[0];
@@ -59,9 +69,16 @@ async function main() {
   }
 
   const demoOwner = signers[DEMO_ASSET.ownerIndex];
-  await (await asset.mintAsset(demoOwner.address, DEMO_ASSET.label)).wait();
+  const documentHash = ethers.keccak256(ethers.toUtf8Bytes(DEMO_ASSET_DOCUMENT));
+  await (
+    await asset.mintAssetWithMetadata(demoOwner.address, DEMO_ASSET.label, documentHash)
+  ).wait();
   console.log(`minted      "${DEMO_ASSET.label}" -> ${demoOwner.address} (tokenId 0)`);
+  console.log(`anchored    document hash ${documentHash}`);
 
+  console.log("");
+  console.log("Demo asset document (keep off-chain — only its hash is on-chain):");
+  console.log(`  ${DEMO_ASSET_DOCUMENT}`);
   console.log("");
   console.log("Copy these into frontend/src/config.ts:");
   console.log(`  IDENTITY_REGISTRY_ADDRESS = "${registryAddress}"`);

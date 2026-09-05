@@ -48,12 +48,12 @@ describe("AssetNFT", function () {
     expect(await asset.totalSupply()).to.equal(0n);
   });
 
-  it("reverts with 'Recipient not registered' when minting to an unknown address", async function () {
+  it("reverts with 'Recipient not an active identity' when minting to an unknown address", async function () {
     const { asset, mallory } = await loadFixture(deployAssetFixture);
 
     await expect(
       asset.mintAsset(mallory.address, "Orphan Asset"),
-    ).to.be.revertedWith("Recipient not registered");
+    ).to.be.revertedWith("Recipient not an active identity");
   });
 
   it("tokensOfOwner returns every token an owner holds", async function () {
@@ -99,6 +99,6 @@ describe("AssetNFT", function () {
 
     await expect(
       asset.connect(carol).transferAsset(carol.address, mallory.address, 0),
-    ).to.be.revertedWith("Recipient not registered");
+    ).to.be.revertedWith("Recipient not an active identity");
   });
 });
