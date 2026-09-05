@@ -39,6 +39,7 @@ What `contracts-app/package.json` and `frontend/package.json` actually hold, and
 | `ethers` | `6.17.0` | `6.17.0` | Latest, and already v6 as this package assumes. |
 | `vite` | `8.2.2` | `8.2.2` | Latest; works with React 18 via `@vitejs/plugin-react@6`. |
 | `solc` | `0.8.24` | — | `^0.8.24` per the locked table. OZ 5.6.1's `ERC721`/`ERC721Enumerable` declare `pragma solidity ^0.8.24`, so 0.8.24 is the lowest compiler that satisfies the dependency. |
+| solc `evmVersion` | `cancun` | `paris` (0.8.24 default) | OZ 5.6.1's `utils/Bytes.sol` uses the `mcopy` opcode, introduced in Cancun. Left at the 0.8.24 default the OpenZeppelin dependency does not compile: `DeclarationError: Function "mcopy" not found.` Set explicitly in `contracts-app/hardhat.config.ts`. Hardhat's local node runs a post-Cancun hardfork, so nothing else has to change. |
 
 ### Scaffold method
 
