@@ -1,5 +1,18 @@
 # Phase 3+4 — Deploy, Seed, Frontend (Hour 4–9)
 
+**Status: Phase 3 complete (2026-09-05). Phase 4 not started.**
+
+Deployed addresses, deterministic on every `hardhat node` restart:
+
+| Contract | Address |
+|---|---|
+| `IdentityRegistry` | `0x5FbDB2315678afecb367f032d93F642f64180aa3` |
+| `AssetNFT` | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` |
+
+**Note for Phase 4:** step 2 registers accounts[1..3] only, so the deployer (accounts[0], "Admin") holds `ADMIN_ROLE` on both contracts but is **not** a registered identity and has no on-chain label. That is what this file specifies and it is fine — but the User View header must fall back to the local `ACCOUNTS[i].label` rather than assume `registry.labels(address)` is non-empty, or selecting Admin renders a blank name. The all-identities table correctly shows 3 rows, not 4.
+
+<!-- DEVIATION 2026-09-05: step 6 (copy ABIs by hand) was implemented as `contracts-app/scripts/copy-abi.ts` instead, run via `npx hardhat run scripts/copy-abi.ts`. Hand-copying leaves a stale ABI behind after a contract change, which fails silently and is a bad thing to debug mid-demo. It writes bare ABI arrays, so the frontend imports them directly with no `.abi` unwrapping. -->
+
 Combined file since deploy output (contract addresses + ABIs) feeds directly into frontend wiring — no clean phase boundary between them worth a separate doc.
 
 ## Phase 3: Deploy + seed (Hour 4–5)
@@ -25,8 +38,8 @@ See `04-design/PAGE_STRUCTURE.md` for screen layout, `03-architecture/FRONTEND_A
 
 ## Checklist
 
-- [ ] Contracts deployed to local node, addresses captured in frontend config
-- [ ] 4 accounts seeded with correct roles + labels, 1 demo asset pre-minted
+- [x] Contracts deployed to local node, addresses captured in frontend config
+- [x] 4 accounts seeded with correct roles + labels, 1 demo asset pre-minted (verified on-chain: all 4 hold their role on **both** contracts; 3 registered identities as specified; token 0 "Field Radio Unit 001" owned by Carol)
 - [ ] Admin Dashboard: register, mint, assign role all work end-to-end from UI
 - [ ] User View: shows correct owned assets per active account
 - [ ] Rejected-action flow shows revert reason on screen, not just in browser console
