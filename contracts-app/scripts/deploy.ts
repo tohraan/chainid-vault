@@ -15,6 +15,15 @@ import { ethers } from "hardhat";
 // strings from build/02-planning/PHASE_03.md — the frontend and the demo script
 // both read them, so don't reword them here.
 const SEED_IDENTITIES = [
+  // The deployer is registered as an identity too.
+  //
+  // DEVIATION 2026-09-05: build/02-planning/PHASE_03.md seeds accounts[1..3]
+  // only, leaving the deployer holding ADMIN_ROLE with no identity record. That
+  // made "Try Admin Action" fail as Admin with "Recipient not an active
+  // identity" — a confusing rejection that looks like the security demo but is
+  // actually just the admin having no identity to mint to. Registering the
+  // deployer makes the role boundary the ONLY variable in that demo beat.
+  { index: 0, label: "Admin — Custody Officer", role: "ADMIN_ROLE" },
   { index: 1, label: "Alice — Manager", role: "MANAGER_ROLE" },
   { index: 2, label: "Bob — Auditor", role: "AUDITOR_ROLE" },
   { index: 3, label: "Carol — User", role: "USER_ROLE" },
