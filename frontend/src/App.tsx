@@ -72,7 +72,7 @@ function Shell() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-40 bg-brand shadow-sm">
+      <header className="sticky top-0 z-40 bg-black shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
           <span className="text-lg font-bold text-white">ChainID Vault</span>
           <nav className="flex gap-1">
@@ -81,10 +81,10 @@ function Shell() {
                 key={tab.id}
                 type="button"
                 onClick={() => goTo(tab.id)}
-                className={`rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors ${
+                className={`rounded-md px-4 py-1.5 text-sm font-semibold transition-colors ${
                   screen === tab.id
-                    ? "bg-white text-brand"
-                    : "text-white/80 hover:bg-white/10"
+                    ? "bg-accent text-accent-ink"
+                    : "text-white/75 hover:bg-white/10"
                 }`}
               >
                 {tab.label}
