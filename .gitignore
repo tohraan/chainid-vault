@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Hardhat build output
+contracts-app/artifacts/
+contracts-app/cache/
+contracts-app/typechain-types/
+
+# Frontend build output
+frontend/dist/
+frontend/.vite/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
