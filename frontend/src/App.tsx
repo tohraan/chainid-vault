@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import AccountSwitcher from "./components/AccountSwitcher";
 import AdminDashboard from "./components/AdminDashboard";
 import AuditTrail from "./components/AuditTrail";
+import CustodyPipeline from "./components/CustodyPipeline";
 import IdentityCentre from "./components/IdentityCentre";
 import RevertDisplay from "./components/RevertDisplay";
 import type { RevertInfo } from "./components/RevertDisplay";
@@ -12,10 +13,11 @@ import { ActiveAccountProvider } from "./context/ActiveAccountContext";
 import { isNodeReachable } from "./lib/provider";
 import { useToasts } from "./lib/useToasts";
 
-type Screen = "admin" | "identity" | "user" | "verify" | "audit";
+type Screen = "pipeline" | "admin" | "identity" | "user" | "verify" | "audit";
 
 // Ordered as the demo walks them: issue -> govern -> hold -> verify -> audit.
 const TABS: Array<{ id: Screen; label: string }> = [
+  { id: "pipeline", label: "Pipeline" },
   { id: "admin", label: "Admin" },
   { id: "identity", label: "Identities" },
   { id: "user", label: "User" },
@@ -24,7 +26,8 @@ const TABS: Array<{ id: Screen; label: string }> = [
 ];
 
 function Shell() {
-  const [screen, setScreen] = useState<Screen>("admin");
+  // The pipeline is the demo's front door: the workflow, not the toolbox.
+  const [screen, setScreen] = useState<Screen>("pipeline");
   const [revert, setRevert] = useState<RevertInfo | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [nodeUp, setNodeUp] = useState<boolean | null>(null);
@@ -94,6 +97,7 @@ function Shell() {
 
       <main className="mx-auto max-w-7xl px-6 py-8">
         {revert && <RevertDisplay info={revert} onDismiss={() => setRevert(null)} />}
+        {screen === "pipeline" && <CustodyPipeline onChainChanged={onChainChanged} />}
         {screen === "admin" && <AdminDashboard {...screenProps} />}
         {screen === "identity" && <IdentityCentre {...screenProps} />}
         {screen === "user" && <UserView {...screenProps} />}

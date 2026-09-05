@@ -14,31 +14,29 @@ import { ethers } from "hardhat";
 // The 3 demo identities seeded alongside the deployer. Labels are the exact
 // strings from build/02-planning/PHASE_03.md — the frontend and the demo script
 // both read them, so don't reword them here.
+// The demo scenario: contractor lifecycle at a defence facility.
+// A contractor is onboarded, issued controlled equipment, and offboarded — and
+// the system refuses to let equipment reach them afterwards.
+// Labels are role/function descriptors, never personal data: they are stored in
+// a public mapping, so anything sensitive belongs off-chain behind a hash.
 const SEED_IDENTITIES = [
-  // The deployer is registered as an identity too.
-  //
-  // DEVIATION 2026-09-05: build/02-planning/PHASE_03.md seeds accounts[1..3]
-  // only, leaving the deployer holding ADMIN_ROLE with no identity record. That
-  // made "Try Admin Action" fail as Admin with "Recipient not an active
-  // identity" — a confusing rejection that looks like the security demo but is
-  // actually just the admin having no identity to mint to. Registering the
-  // deployer makes the role boundary the ONLY variable in that demo beat.
-  { index: 0, label: "Admin — Custody Officer", role: "ADMIN_ROLE" },
-  { index: 1, label: "Alice — Manager", role: "MANAGER_ROLE" },
-  { index: 2, label: "Bob — Auditor", role: "AUDITOR_ROLE" },
-  { index: 3, label: "Carol — User", role: "USER_ROLE" },
+  { index: 0, label: "Security Administrator", role: "ADMIN_ROLE" },
+  { index: 1, label: "Stores Manager", role: "MANAGER_ROLE" },
+  { index: 2, label: "Internal Auditor", role: "AUDITOR_ROLE" },
+  { index: 3, label: "Contractor — Radar Division", role: "USER_ROLE" },
 ] as const;
 
 // Pre-minted so the User View has something to show on the demo's first click.
-const DEMO_ASSET = { ownerIndex: 3, label: "Field Radio Unit 001" };
+const DEMO_ASSET = { ownerIndex: 3, label: "Spectrum Analyser SA-2100" };
 
 // Stands in for the real off-chain custody record. Only its hash goes on-chain:
 // the contents stay off-chain, so no sensitive asset data is published, but any
 // verifier can still prove a document is byte-for-byte the one registered.
 const DEMO_ASSET_DOCUMENT = JSON.stringify({
-  serial: "BEL-RF-2026-00417",
-  model: "Field Radio Unit",
+  serial: "BEL-SA-2026-00417",
+  model: "Spectrum Analyser SA-2100",
   classification: "RESTRICTED",
+  calibratedUntil: "2027-03-31",
   issuedBy: "Bharat Electronics Limited",
 });
 
