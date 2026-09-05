@@ -1,5 +1,9 @@
 # Phase 1 — Scaffold (Hour 0–1)
 
+<!-- DEVIATION 2026-09-05: step 2 used a non-interactive Hardhat 2 scaffold instead of `npx hardhat init` (wizard is interactive and now scaffolds Hardhat 3). Step 5 scaffolded React 19, downgraded to React 18 per the locked stack. Step 7 pinned Tailwind v3. Full rationale + version table: `build/09-engineering/TECH_STACK.md` "As-installed pins (Phase 1)". -->
+
+**Status: complete (2026-09-05).**
+
 ## Goal
 
 Two runnable, empty-ish projects, no logic yet, both start without error.
@@ -18,11 +22,11 @@ Two runnable, empty-ish projects, no logic yet, both start without error.
 
 ## Checklist (must all pass before Phase 2)
 
-- [ ] `contracts-app/` compiles with `npx hardhat compile` (empty contracts dir is fine, should not error)
-- [ ] `frontend/` runs `npm run dev`, loads blank page, Tailwind class renders correctly
-- [ ] `@openzeppelin/contracts` present in `contracts-app/node_modules`
-- [ ] `ethers` present in `frontend/node_modules`
-- [ ] Git repo initialized at root, first commit made (see `09-engineering/GIT_WORKFLOW.md`)
+- [x] `contracts-app/` compiles with `npx hardhat compile` (empty contracts dir is fine, should not error)
+- [x] `frontend/` runs `npm run dev`, loads blank page, Tailwind class renders correctly
+- [x] `@openzeppelin/contracts` present in `contracts-app/node_modules`
+- [x] `ethers` present in `frontend/node_modules`
+- [x] Git repo initialized at root, first commit made (see `09-engineering/GIT_WORKFLOW.md`)
 
 ## Do not
 
