@@ -1,13 +1,13 @@
 # Status — dev1
 
-    task:    T-000
-    state:   DONE
+    task:    none
+    state:   STANDBY
     updated: 2026-09-05
 
 ## Last completed
 
-T-000 channel smoke test. Received the task, running in Antigravity.
+Nothing yet — waiting to pick up T-000.
 
 ## Notes for the orchestrator
 
-Bus is working end to end.
+(none)

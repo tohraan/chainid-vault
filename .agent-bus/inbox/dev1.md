@@ -6,14 +6,26 @@
 
 ## Task
 
-Channel smoke test. Confirm the bus works before real work is dispatched.
-Do not write any code. Just prove you received this and can report back.
+**Channel smoke test. Write no code.**
+
+This exists so you prove the bus works before real work depends on it. Read
+`.agent-bus/PROTOCOL.md` and the root `AGENTS.md` in full, then report back.
 
 ## Files you own for this task
 
 - `.agent-bus/status/dev1.md`
 
+Nothing else. Do not touch any other file for T-000.
+
 ## Done when
 
-Your status file says `state: DONE`, `task: T-000`, and names the IDE you are
-running in, so the orchestrator knows which teammate is on which slot.
+`.agent-bus/status/dev1.md` is committed and pushed to `main` with:
+
+- `task: T-000`
+- `state: DONE`
+- the IDE you are running in, and the name of the teammate driving it, so the
+  orchestrator knows which human holds which slot
+- one line confirming you have read `AGENTS.md` and `.agent-bus/PROTOCOL.md`
+- anything about the repo that already looks wrong to you
+
+Then go back to watching this file. The orchestrator dispatches T-001 next.

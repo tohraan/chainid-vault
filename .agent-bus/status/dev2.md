@@ -1,12 +1,12 @@
 # Status — dev2
 
     task:    none
-    state:   IN_PROGRESS
+    state:   STANDBY
     updated: 2026-09-05
 
 ## Last completed
 
-Nothing yet — waiting for a first task.
+Nothing yet — waiting to pick up T-000.
 
 ## Notes for the orchestrator
 
