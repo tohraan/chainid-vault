@@ -70,12 +70,15 @@ cd contracts-app && npx hardhat test    # 11 passing
 
 ## Phases
 
-| Phase | Hours | Content |
-|---|---|---|
-| 1 | 0–1 | Scaffold: Hardhat + React/Vite, install deps |
-| 2 | 1–4 | Contracts: IdentityRegistry, AccessControl roles, AssetNFT + tests |
-| 3 | 4–5 | Deploy script, local node, seed 4 accounts with roles |
-| 4 | 5–9 | Frontend: 3 screens, contract wiring, audit trail, revert display |
-| 5 | 9–12 | Rehearsal, bugfix, polish, buffer |
+| Phase | Hours | Content | Status |
+|---|---|---|---|
+| 1 | 0–1 | Scaffold: Hardhat + React/Vite, install deps | ✅ done |
+| 2 | 1–4 | Contracts: IdentityRegistry, AccessControl roles, AssetNFT + tests | ✅ done — 11/11 tests |
+| 3 | 4–5 | Deploy script, local node, seed 4 accounts with roles | ✅ done |
+| 4 | 5–9 | Frontend: 3 screens, contract wiring, audit trail, revert display | ✅ done — 3 journeys verified |
+| 5 | 9–12 | Rehearsal, bugfix, polish, buffer | ⬜ open |
+
+Current state in detail — what is verified, what is known-broken, what is deliberately
+not built: [`.agent-bus/STATE.md`](./.agent-bus/STATE.md).
 
 Detail: `build/02-planning/MASTER_PHASE_PLAN.md`.

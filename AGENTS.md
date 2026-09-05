@@ -26,13 +26,20 @@ Everything else from the original SIH pitch (DIDs, verifiable credentials, IPFS,
 
 ### Current state of the repo
 
+**Last updated 2026-09-05. Phases 1-4 are complete, merged to `main`, and verified. Phase 5 (rehearsal) is open.**
+
 | Path | Status |
 |---|---|
-| `build/` | **Complete.** 70+ markdown files — the full spec. This is the source of truth. |
-| `contracts-app/` | Not created yet. Phase 1 creates it. |
-| `frontend/` | Not created yet. Phase 1 creates it. |
+| `build/` | **Complete.** 70+ markdown files — the full spec. Still the source of truth. |
+| `contracts-app/` | **Built.** `IdentityRegistry.sol` + `AssetNFT.sol`, deploy + seed scripts, **11/11 tests passing.** |
+| `frontend/` | **Built.** 3 screens, signer swap, live audit trail, on-screen revert banner. All 3 user journeys verified in a real browser, 0 console errors. |
+| `.agent-bus/` | **Live.** The channel three agents use to coordinate. Read `.agent-bus/PROTOCOL.md`. |
 
-So: **the specification is done; the code is not.** Your job is almost certainly to build code that conforms to `build/`, not to redesign anything in `build/`.
+So: the specification is done, **and so is the MVP code.** What remains is Phase 5 — rehearsal, a backup screen recording, deck screenshots — plus a short polish backlog.
+
+**Read [`.agent-bus/STATE.md`](./.agent-bus/STATE.md) next.** It carries exactly what is built, what is verified, what is known-broken, what is deliberately not built, and the current backlog. It is the file to trust for "where are we right now" — this section only summarises it.
+
+If you are a worker agent, you do not pick your own work. The orchestrator dispatches it into `.agent-bus/inbox/<your-id>.md`. See `.agent-bus/PROTOCOL.md`.
 
 ### Target structure (build toward this)
 
@@ -42,8 +49,9 @@ chainid-vault/
 ├── CLAUDE.md            # pointer to this file
 ├── README.md            # human-facing overview
 ├── build/               # the spec — source of truth
-├── contracts-app/       # Hardhat + Solidity  (Phase 1–3)
-└── frontend/            # React + Vite + Tailwind  (Phase 4)
+├── contracts-app/       # Hardhat + Solidity  (Phase 1–3) — BUILT
+├── frontend/            # React + Vite + Tailwind  (Phase 4) — BUILT
+└── .agent-bus/          # multi-agent coordination channel
 ```
 
 Full detail: `build/09-engineering/PROJECT_STRUCTURE.md`.
