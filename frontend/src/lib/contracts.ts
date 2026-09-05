@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import AssetNFTAbi from "../abi/AssetNFT.json";
 import IdentityRegistryAbi from "../abi/IdentityRegistry.json";
-import { ASSET_NFT_ADDRESS, IDENTITY_REGISTRY_ADDRESS } from "../config";
+import { ASSET_NFT_ADDRESS, CHAIN, IDENTITY_REGISTRY_ADDRESS } from "../config";
 import { provider } from "./provider";
 
 export const registryInterface = new ethers.Interface(IdentityRegistryAbi);
@@ -119,4 +119,60 @@ export function extractRevertReason(error: unknown): string {
   }
 
   return err?.shortMessage ?? err?.message ?? "Transaction reverted";
+}
+
+// --- Identity lifecycle -----------------------------------------------------
+
+/** Mirrors IdentityRegistry.IdentityStatus. Order is significant. */
+export const IDENTITY_STATUS = ["Unregistered", "Active", "Suspended", "Revoked"] as const;
+export type IdentityStatusName = (typeof IDENTITY_STATUS)[number];
+
+export function statusName(status: bigint | number): IdentityStatusName {
+  return IDENTITY_STATUS[Number(status)] ?? "Unregistered";
+}
+
+/** Colour intent per status, so every screen reads the same way. */
+export const STATUS_TONE: Record<IdentityStatusName, "good" | "warn" | "bad" | "mute"> = {
+  Active: "good",
+  Suspended: "warn",
+  Revoked: "bad",
+  Unregistered: "mute",
+};
+
+// --- EIP-712 proof of control ----------------------------------------------
+
+/**
+ * Sign the challenge for `identity` and submit it. The private key never leaves
+ * the signer; only the signature is sent.
+ *
+ * The domain must match IdentityRegistry's EIP712("ChainIDVault", "1") exactly,
+ * and the chainId + verifyingContract are what bind the signature to this
+ * deployment — a signature captured here cannot be replayed anywhere else.
+ */
+export async function proveControl(privateKey: string, identity: string, ttlSeconds = 300) {
+  const signer = getSignerFor(privateKey);
+  const registry = getIdentityRegistry(signer);
+
+  const latest = await provider.getBlock("latest");
+  const deadline = BigInt((latest?.timestamp ?? Math.floor(Date.now() / 1000)) + ttlSeconds);
+  const nonce: bigint = await registry.nonces(identity);
+
+  const domain = {
+    name: "ChainIDVault",
+    version: "1",
+    chainId: CHAIN.chainId,
+    verifyingContract: IDENTITY_REGISTRY_ADDRESS,
+  };
+  const types = {
+    ProofOfControl: [
+      { name: "identity", type: "address" },
+      { name: "nonce", type: "uint256" },
+      { name: "deadline", type: "uint256" },
+    ],
+  };
+
+  const signature = await signer.signTypedData(domain, types, { identity, nonce, deadline });
+  const tx = await registry.proveControl(identity, deadline, signature);
+  const receipt = await tx.wait();
+  return { nonce, deadline, signature, txHash: receipt?.hash ?? tx.hash };
 }
