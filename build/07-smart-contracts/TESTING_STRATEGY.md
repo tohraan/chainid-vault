@@ -33,6 +33,8 @@ Installed version is **@openzeppelin/contracts 5.6.1**, i.e. v5, so the v5 branc
 
 The `require()` reverts (`"Already registered"`, `"Recipient not registered"`, `"Not authorized"`, `"Label required"`, `"Zero address"`) are plain string reasons and match with `.to.be.revertedWith("...")`.
 
+**RESOLVED 2026-09-05 during Phase 3** — the answer and a working `extractRevertReason` helper are now in `03-architecture/FRONTEND_ARCHITECTURE.md` "Error handling pattern". Summary: over JSON-RPC the custom error also fails to auto-decode (`reason` is `null`, `shortMessage` is `execution reverted (unknown custom error)`), because the revert lands in ethers' `estimateGas` preflight. `error.data` carries the encoded error and `Interface.parseError` decodes it correctly. `require` strings are unaffected and populate `error.reason` normally. Original note follows.
+
 **Open risk for Phase 4 (`RevertDisplay`).** `03-architecture/FRONTEND_ARCHITECTURE.md` says to read `error.reason` in the catch block. Under the *in-process* Hardhat network the thrown object is a `SolidityError` with only `{ stackTrace, data, transactionHash }` — `error.reason` is `undefined`, and the human-readable text lives in `error.message`. The frontend does NOT use that path (it talks JSON-RPC to `hardhat node` via `ethers.JsonRpcProvider`, where ethers decodes the revert itself), but the exact shape over JSON-RPC must be confirmed with the node actually running before `RevertDisplay` is written. Verify during Phase 3 and record the answer here.
 
 ### The v5 rule

@@ -38,7 +38,35 @@ Do not swap any of these without human approval — see `build/09-engineering/TE
 
 ## Running the demo
 
-Not yet buildable — `contracts-app/` and `frontend/` don't exist until Phase 1 lands. Setup steps live in `build/10-operations/LOCAL_DEVELOPMENT.md`; this section gets filled in with real commands once the scaffold is committed.
+Two terminals, both must stay open. Full detail and troubleshooting: `build/10-operations/LOCAL_DEVELOPMENT.md`.
+
+**Terminal 1 — the chain.** Leave running; stopping it wipes all state.
+
+```bash
+cd contracts-app
+npm install
+npx hardhat node
+```
+
+**Terminal 2 — deploy, seed, then serve the UI.**
+
+```bash
+cd contracts-app
+npx hardhat run scripts/deploy.ts --network localhost   # deploys both contracts + seeds 4 accounts
+cd ../frontend
+npm install
+npm run dev                                             # http://localhost:5173
+```
+
+The deploy script prints the two contract addresses; they should match `frontend/src/config.ts` (they are deterministic, so normally they will). After any contract change, re-run `npx hardhat run scripts/copy-abi.ts` from `contracts-app/` to refresh `frontend/src/abi/`.
+
+**Contract tests:**
+
+```bash
+cd contracts-app && npx hardhat test    # 11 passing
+```
+
+> The frontend UI lands in Phase 4 — today `npm run dev` serves the Phase 1 scaffold page.
 
 ## Phases
 
