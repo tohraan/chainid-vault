@@ -110,52 +110,39 @@ for i,(t,d) in enumerate([("The card is not the person",
 txt(s,0.75,y+3.9,11.9,0.4,"Nobody at that gate is doing anything wrong. The system is simply built on trust rather than proof.",17,True,INK)
 note(s,"Hold this picture. Every problem in the next ten minutes is this gate, with higher stakes.")
 
-# ══════════════════ 3 SAME GATE, HIGHER STAKES
+# ══════════════════ 3 THE PIVOT — same four failures, factory floor
 s=slide()
-y=head(s,"Speaker 1 · The real setting","Now the gate is a defence facility",
-       "Same three checks. Same failure modes. Consequences that do not stay on campus.")
-rows=[("Who are you?","Student ID card","A contractor's credentials"),
-      ("Should you be here?","On the guard's list","Cleared for this equipment, today"),
-      ("Did anyone record it?","A notebook at the gate","The custody record for controlled equipment"),
-      ("What if they left?","Card still opens the gate","Assets still issued in their name")]
-box(s,0.75,y+0.1,11.85,0.42,fill=BLACK,border=None)
-txt(s,1.0,y+0.19,3.2,0.25,"THE QUESTION",10.5,True,ACC)
-txt(s,4.6,y+0.19,3.4,0.25,"AT THE UNIVERSITY",10.5,True,WHITE)
-txt(s,8.6,y+0.19,3.8,0.25,"AT A DEFENCE FACILITY",10.5,True,WHITE)
-yy=y+0.52
-for i,(q,a,c) in enumerate(rows):
-    box(s,0.75,yy,11.85,0.72,fill=WHITE if i%2==0 else SOFT,border=LINE)
-    txt(s,1.0,yy+0.2,3.4,0.32,q,14.5,True,INK)
-    txt(s,4.6,yy+0.22,3.7,0.3,a,12.5,False,MUTE)
-    txt(s,8.6,yy+0.22,3.9,0.3,c,12.5,False,RED if i==3 else INK)
-    yy+=0.72
-box(s,0.75,yy+0.25,11.85,0.95,fill=SOFT,border=LINE)
-txt(s,1.05,yy+0.44,11.3,0.6,"The last row is the one that costs money. Access gets removed on someone's last day.\nThe equipment they were holding does not remove itself.",16,True,INK,line=1.28)
-note(s,"")
+y=head(s,"Speaker 1 · The pivot","Now put that gate inside a defence factory",
+       "Same four failures. Thousands of times a day. On controlled equipment.")
+box(s,0.75,y+0.05,11.85,0.4,fill=BLACK,border=None)
+txt(s,1.0,y+0.13,4.6,0.25,"AT THE GATE",10.5,True,RGBColor(0xA3,0xA0,0x99))
+txt(s,7.15,y+0.13,5.2,0.25,"ON A DEFENCE MANUFACTURING FLOOR",10.5,True,ACC)
+pairs=[("The card is not the person",
+        "A credential is not a cleared operator"),
+       ("He waves through the face he knows",
+        "\"He has worked this line for years\" — the check stops happening"),
+       ("The graduate's card still opens the gate",
+        "The contractor's engagement ended. The calibrated instrument is still logged to them."),
+       ("The register is the guard's notebook",
+        "The inventory system is maintained by the organisation being audited")]
+yy=y+0.5
+for i,(a,b) in enumerate(pairs):
+    box(s,0.75,yy,11.85,0.7,fill=WHITE if i%2==0 else SOFT,border=LINE)
+    txt(s,1.0,yy+0.21,5.5,0.35,a,13,False,MUTE)
+    arrow(s,6.5,yy+0.26,0.4,0.17,INK)
+    txt(s,7.15,yy+0.16,5.3,0.45,b,13,True,RED if i>=2 else INK,line=1.15)
+    yy+=0.7
+box(s,0.75,yy+0.16,5.6,1.02,fill=SOFT,border=LINE)
+txt(s,1.0,yy+0.31,5.1,0.25,"ONE GATE, ONE GUARD",10.5,True,MUTE)
+txt(s,1.0,yy+0.58,5.1,0.52,"A few hundred people a day.\nOne person can hold it in their head.",13,False,INK,line=1.2)
+box(s,7.0,yy+0.16,5.6,1.02,fill=REDBG,border=RED)
+txt(s,7.25,yy+0.31,5.1,0.25,"A FACTORY",10.5,True,RED)
+txt(s,7.25,yy+0.58,5.15,0.52,"Thousands of custody handoffs a day —\nsince 2021, across seven separate companies.",13,True,INK,line=1.2)
+note(s,"Nobody can hold that in their head. So it goes into a system — and the system belongs to the people being audited.")
 
-# ══════════════════ 4 THE TRUST PROBLEM
+# ══════════════════ 4 THE NUMBER
 s=slide()
-y=head(s,"Speaker 1 · The real problem","The problem is not missing data. It is that no record outranks another.",
-       "Three systems, three answers, and no way to settle which one is right.")
-labels=[("IDENTITY SYSTEM","says the person is valid"),
-        ("ASSET REGISTER","says who holds the item"),
-        ("THE PAPERWORK","says something else again")]
-x=0.75
-for t,d in labels:
-    box(s,x,y+0.15,3.7,1.15,fill=WHITE,border=LINE)
-    txt(s,x+0.25,y+0.38,3.2,0.25,t,11.5,True,INK)
-    txt(s,x+0.25,y+0.68,3.2,0.35,d,12.5,False,MUTE)
-    arrow(s,x+1.65,y+1.4,0.35,0.2,MUTE,down=True)
-    x+=4.05
-box(s,0.75,y+1.75,11.85,0.85,fill=BLACK,border=None)
-txt(s,1.05,y+1.95,11.3,0.45,"All three are maintained by the same organisation.",18,True,WHITE)
-box(s,0.75,y+2.85,11.85,1.15,fill=REDBG,border=RED)
-txt(s,1.05,y+3.08,11.3,0.75,"And the log that would show a record was altered is stored by the same system that would have altered it.\nWhen the party who creates the record also controls it, nobody outside can verify anything.",16,True,RED,line=1.32)
-note(s,"This is the sentence the whole pitch turns on. Say it slowly.")
-
-# ══════════════════ 5 THE NUMBER
-s=slide()
-y=head(s,"Speaker 2 · The stakes","₹1,237 crore of stores nobody could reconcile")
+y=head(s,"Speaker 1 · The consequence","₹1,237 crore of stores nobody could reconcile")
 txt(s,0.75,y+0.15,7.4,1.4,"₹1,237 crore",76,True,RED)
 txt(s,0.75,y+1.6,7.4,0.8,"of the Ordnance Factory Board's stores were non-active —\nnot moving, surplus, or obsolete. Out of ₹6,172 crore held.",18,False,INK,line=1.3)
 txt(s,0.75,y+2.5,7.4,0.3,"CAG Audit Report No. 10 of 2024, Government of India",12,True,MUTE)
@@ -168,7 +155,7 @@ txt(s,8.7,y+2.2,3.6,0.3,"WHAT IT DOES SHOW",11,True,RED)
 txt(s,8.7,y+2.58,3.65,1.2,"This is what it looks like when an\norganisation can no longer reconcile\nits own custody records.\n\nThat is a verification problem.",13.5,False,INK,line=1.3)
 note(s,"Documented external problem — not a claim about our system.")
 
-# ══════════════════ 6 WHY NOW
+# ══════════════════ 5 WHY NOW
 s=slide()
 y=head(s,"Speaker 2 · Why now","The old approach was given a decade, and the gap did not close",
        "Reorganising the institution did not fix a problem that lives in the records.")
@@ -190,7 +177,7 @@ txt(s,1.05,y+2.66,11.3,0.65,"More contractors, more sites, more handoffs between
 txt(s,0.75,y+3.75,11.85,0.4,"The problem was never the warehouse. It was that no party could prove which record was correct.",16,True,RED)
 note(s,"")
 
-# ══════════════════ 7 THREE QUESTIONS
+# ══════════════════ 6 THREE QUESTIONS
 s=slide()
 y=head(s,"Speaker 2 · The insight","Every critical action comes down to three questions")
 qs=[("WHO ARE YOU?","Identity","Is this a real, currently valid person — not just a card?",BLU),
@@ -207,7 +194,7 @@ for q,tag,d,col in qs:
 txt(s,0.75,yy+0.12,11.85,0.4,"Miss any one and the action cannot be trusted. We built ChainID Vault around exactly these three.",17,True,INK)
 note(s,"The gate answered all three badly. So does most enterprise software.")
 
-# ══════════════════ 8 WHAT IT IS
+# ══════════════════ 7 WHAT IT IS
 s=slide()
 y=head(s,"Speaker 3 · The solution","ChainID Vault: verify the identity, enforce the permission, prove the action")
 box(s,0.75,y+0.1,11.85,1.15,fill=BLACK,border=None)
@@ -226,7 +213,7 @@ box(s,0.75,y+3.6,11.85,0.62,fill=SOFT,border=LINE)
 txt(s,1.05,y+3.76,11.3,0.35,"Notice what we have not mentioned yet: any technology at all.",15,True,MUTE)
 note(s,"")
 
-# ══════════════════ 9 THE ACTION FLOW
+# ══════════════════ 8 THE ACTION FLOW
 s=slide()
 y=head(s,"Speaker 3 · How it works","What happens the moment somebody acts",
        "The diagram follows the action, not the components.")
@@ -251,7 +238,7 @@ note(s,"")
 
 prs.save(OUT); print("part 1 done:", len(prs.slides.__iter__.__self__._sldIdLst))
 
-# ══════════════════ 10 WHY BLOCKCHAIN
+# ══════════════════ 9 WHY BLOCKCHAIN
 s=slide()
 y=head(s,"Speaker 3 · The technology choice","Blockchain is where we keep the proof, not the files",
        "One job, precisely defined. We are not claiming it is better at everything.")
@@ -277,7 +264,7 @@ for t,col,bg,items,foot in cols:
 arrow(s,4.68,y+2.6,0.28,0.18,INK); arrow(s,8.73,y+2.6,0.28,0.18,INK)
 note(s,"Runs today on a local chain. The deployment target is a permissioned network such as Hyperledger Besu.")
 
-# ══════════════════ 11 DEMO — REFUSE
+# ══════════════════ 10 DEMO — REFUSE
 s=slide()
 y=head(s,"Speaker 4 · Demo","Watch the system refuse something it should refuse",
        "The contractor from slide 3. Engagement ended, identity revoked.")
@@ -293,7 +280,7 @@ box(s,0.75,y+3.35,11.85,1.0,fill=REDBG,border=RED)
 txt(s,1.05,y+3.55,11.3,0.65,"The account that just tried holds every privilege in this system. It created that identity. It issued the original\nequipment. It still cannot do this. A database administrator can always override the database. Here, nobody can.",15,True,RED,line=1.3)
 note(s,"Pause here. Let it sit before moving on.")
 
-# ══════════════════ 12 DEMO — ALLOW + PROOF
+# ══════════════════ 11 DEMO — ALLOW + PROOF
 s=slide()
 y=head(s,"Speaker 4 · Demo","Now watch it allow something it should allow",
        "Same action. Active identity, correct permission.")
@@ -305,7 +292,7 @@ box(s,0.75,y+3.55,11.85,0.85,fill=SOFT,border=LINE)
 txt(s,1.05,y+3.73,11.3,0.5,"Nobody decided the second one was fake. Two fingerprints differ. That is arithmetic, not judgement —\nand this screen has no login, so someone who does not trust us can still run the check.",15,True,INK,line=1.3)
 note(s,"One thing absent from the history: the refused attempts. Nothing was allowed to happen, so nothing was recorded.")
 
-# ══════════════════ 13 WE ATTACKED IT
+# ══════════════════ 12 WE ATTACKED IT
 s=slide()
 y=head(s,"Speaker 5 · Credibility","We attacked our own system and it broke",
        "A red banner in our own interface proves nothing. So we switched the interface off.")
@@ -333,7 +320,7 @@ box(s,0.75,y+2.85,11.85,0.9,fill=SOFT,border=LINE)
 txt(s,1.05,y+3.05,11.3,0.5,"We did not only test that valid actions work. We tested that invalid ones are stopped —\nreplay, impersonation, expired proofs, revoked identities, tampered documents.",15,True,INK,line=1.3)
 note(s,"")
 
-# ══════════════════ 14 WHAT CHANGES
+# ══════════════════ 13 WHAT CHANGES
 s=slide()
 y=head(s,"Speaker 5 · The shift","From trusting records to proving them")
 pairs=[("\"The system says this happened.\"","\"The record can be independently checked.\""),
@@ -352,7 +339,7 @@ box(s,0.75,yy+0.15,11.85,0.8,fill=BLACK,border=None)
 txt(s,1.05,yy+0.33,11.3,0.45,"What changes is not the screens. It is who has to be trusted for the record to mean anything.",16,True,WHITE)
 note(s,"No percentages here. We have not measured any, and we will not invent them.")
 
-# ══════════════════ 15 HONEST CLAIM + CLOSE
+# ══════════════════ 14 HONEST CLAIM + CLOSE
 s=slide()
 y=head(s,"Speaker 5 · Close","What we can honestly claim, and what we cannot")
 box(s,0.75,y+0.1,5.8,2.7,fill=GRNBG,border=GRN)
