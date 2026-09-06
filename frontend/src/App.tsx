@@ -15,6 +15,11 @@ import { useToasts } from "./lib/useToasts";
 
 type Screen = "pipeline" | "admin" | "identity" | "user" | "verify" | "audit";
 
+// When deployed to Vercel (or any host without a local Hardhat node), set
+// VITE_DEMO_MODE=true so the UI renders fully instead of blocking on the
+// "Cannot connect to local node" screen.
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
+
 // Ordered as the demo walks them: issue -> govern -> hold -> verify -> audit.
 const TABS: Array<{ id: Screen; label: string }> = [
   { id: "pipeline", label: "Pipeline" },
@@ -25,6 +30,15 @@ const TABS: Array<{ id: Screen; label: string }> = [
   { id: "audit", label: "Audit" },
 ];
 
+function DemoModeBanner() {
+  return (
+    <div className="bg-accent/90 px-4 py-2 text-center text-sm font-medium text-accent-ink">
+      🔗 Demo mode — blockchain features require a local Hardhat node.
+      UI navigation and layout are fully functional.
+    </div>
+  );
+}
+
 function Shell() {
   // The pipeline is the demo's front door: the workflow, not the toolbox.
   const [screen, setScreen] = useState<Screen>("pipeline");
@@ -34,6 +48,11 @@ function Shell() {
   const { toasts, push, update, dismiss } = useToasts();
 
   useEffect(() => {
+    // In demo mode, skip the node check — we know it's unreachable.
+    if (DEMO_MODE) {
+      setNodeUp(true);
+      return;
+    }
     isNodeReachable().then(setNodeUp);
   }, []);
 
@@ -94,6 +113,8 @@ function Shell() {
           <AccountSwitcher />
         </div>
       </header>
+
+      {DEMO_MODE && <DemoModeBanner />}
 
       <main className="mx-auto max-w-7xl px-6 py-8">
         {revert && <RevertDisplay info={revert} onDismiss={() => setRevert(null)} />}
