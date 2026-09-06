@@ -1,5 +1,5 @@
 from pptx import Presentation
-from pptx.util import Inches as In, Pt, Emu
+from pptx.util import Inches as In, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
@@ -7,580 +7,376 @@ from PIL import Image
 import os
 
 OUT = "/Users/tohraan/Downloads/build/docs/ChainIDVault_Pitch_Deck.pptx"
-S = "/Users/tohraan/Downloads/build/docs/screens"
+S   = "/Users/tohraan/Downloads/build/docs/screens"
 
-INK   = RGBColor(0x1C,0x1B,0x1A)
-MUTE  = RGBColor(0x6B,0x68,0x62)
-LINE  = RGBColor(0xD6,0xD3,0xCD)
-SOFT  = RGBColor(0xF2,0xF1,0xEE)
-ACC   = RGBColor(0xFC,0xBD,0x31)
-RED   = RGBColor(0xBC,0x1C,0x1C)
-REDBG = RGBColor(0xFD,0xEC,0xEC)
-GRN   = RGBColor(0x2E,0x9E,0x5B)
-GRNBG = RGBColor(0xE7,0xF4,0xEC)
-BLU   = RGBColor(0x3B,0x8F,0xD9)
-WHITE = RGBColor(0xFF,0xFF,0xFF)
-BLACK = RGBColor(0x00,0x00,0x00)
+INK=RGBColor(0x1C,0x1B,0x1A); MUTE=RGBColor(0x6B,0x68,0x62); LINE=RGBColor(0xD6,0xD3,0xCD)
+SOFT=RGBColor(0xF2,0xF1,0xEE); ACC=RGBColor(0xFC,0xBD,0x31)
+RED=RGBColor(0xBC,0x1C,0x1C); REDBG=RGBColor(0xFD,0xEC,0xEC)
+GRN=RGBColor(0x2E,0x9E,0x5B); GRNBG=RGBColor(0xE7,0xF4,0xEC)
+BLU=RGBColor(0x3B,0x8F,0xD9); BLUBG=RGBColor(0xEA,0xF3,0xFB)
+WHITE=RGBColor(0xFF,0xFF,0xFF); BLACK=RGBColor(0,0,0)
 
-prs = Presentation()
-prs.slide_width, prs.slide_height = In(13.333), In(7.5)
-BLANK = prs.slide_layouts[6]
-W = 13.333
+prs = Presentation(); prs.slide_width, prs.slide_height = In(13.333), In(7.5)
+BLANK = prs.slide_layouts[6]; W = 13.333
 
 def slide():
     s = prs.slides.add_slide(BLANK)
-    bg = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
-    bg.fill.solid(); bg.fill.fore_color.rgb = WHITE; bg.line.fill.background()
-    bg.shadow.inherit = False
+    bg = s.shapes.add_shape(MSO_SHAPE.RECTANGLE,0,0,prs.slide_width,prs.slide_height)
+    bg.fill.solid(); bg.fill.fore_color.rgb=WHITE; bg.line.fill.background(); bg.shadow.inherit=False
     return s
 
-def txt(s, x, y, w, h, text, size=14, bold=False, color=INK, align=PP_ALIGN.LEFT,
-        italic=False, space=3, anchor=MSO_ANCHOR.TOP, line=None):
-    tb = s.shapes.add_textbox(In(x), In(y), In(w), In(h))
-    tf = tb.text_frame; tf.word_wrap = True
-    tf.vertical_anchor = anchor
-    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
-    lines = text.split("\n") if isinstance(text, str) else text
-    for i, ln in enumerate(lines):
-        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.alignment = align; p.space_after = Pt(space)
-        if line: p.line_spacing = line
-        r = p.add_run(); r.text = ln
-        r.font.name = "Arial"; r.font.size = Pt(size); r.font.bold = bold
-        r.font.italic = italic; r.font.color.rgb = color
+def txt(s,x,y,w,h,text,size=14,bold=False,color=INK,align=PP_ALIGN.LEFT,line=None,
+        anchor=MSO_ANCHOR.TOP,italic=False,font="Arial"):
+    tb=s.shapes.add_textbox(In(x),In(y),In(w),In(h)); tf=tb.text_frame
+    tf.word_wrap=True; tf.vertical_anchor=anchor
+    tf.margin_left=tf.margin_right=tf.margin_top=tf.margin_bottom=0
+    for i,ln in enumerate(text.split("\n")):
+        p=tf.paragraphs[0] if i==0 else tf.add_paragraph()
+        p.alignment=align; p.space_after=Pt(2)
+        if line: p.line_spacing=line
+        r=p.add_run(); r.text=ln
+        r.font.name=font; r.font.size=Pt(size); r.font.bold=bold
+        r.font.italic=italic; r.font.color.rgb=color
     return tb
 
-def header(s, speaker, title, sub=None):
-    txt(s, 0.75, 0.42, 10, 0.25, speaker.upper(), 10, True, MUTE)
-    txt(s, 0.75, 0.72, 11.8, 0.6, title, 30, True, INK)
-    bar = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, In(0.75), In(1.42), In(1.1), In(0.055))
-    bar.fill.solid(); bar.fill.fore_color.rgb = ACC; bar.line.fill.background(); bar.shadow.inherit=False
-    if sub:
-        txt(s, 0.75, 1.62, 11.8, 0.4, sub, 15, False, MUTE)
-    return 2.15 if sub else 1.85
+def head(s,speaker,title,sub=None):
+    txt(s,0.75,0.42,11,0.25,speaker.upper(),10,True,MUTE)
+    txt(s,0.75,0.72,11.9,0.75,title,29,True,INK,line=1.05)
+    b=s.shapes.add_shape(MSO_SHAPE.RECTANGLE,In(0.75),In(1.52),In(1.1),In(0.055))
+    b.fill.solid(); b.fill.fore_color.rgb=ACC; b.line.fill.background(); b.shadow.inherit=False
+    if sub: txt(s,0.75,1.72,11.9,0.4,sub,15,False,MUTE)
+    return 2.25 if sub else 1.95
 
-def box(s, x, y, w, h, fill=WHITE, border=LINE, radius=False):
-    shp = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE if radius else MSO_SHAPE.RECTANGLE,
-                             In(x), In(y), In(w), In(h))
-    if fill is None:
-        shp.fill.background()
-    else:
-        shp.fill.solid(); shp.fill.fore_color.rgb = fill
-    if border is None: shp.line.fill.background()
-    else:
-        shp.line.color.rgb = border; shp.line.width = Pt(1)
-    shp.shadow.inherit = False
-    if radius:
-        try: shp.adjustments[0] = 0.06
-        except Exception: pass
-    return shp
+def box(s,x,y,w,h,fill=WHITE,border=LINE):
+    sh=s.shapes.add_shape(MSO_SHAPE.RECTANGLE,In(x),In(y),In(w),In(h))
+    if fill is None: sh.fill.background()
+    else: sh.fill.solid(); sh.fill.fore_color.rgb=fill
+    if border is None: sh.line.fill.background()
+    else: sh.line.color.rgb=border; sh.line.width=Pt(1)
+    sh.shadow.inherit=False; return sh
 
-def arrow(s, x, y, w=0.42, color=MUTE):
-    a = s.shapes.add_shape(MSO_SHAPE.RIGHT_ARROW, In(x), In(y), In(w), In(0.22))
-    a.fill.solid(); a.fill.fore_color.rgb = color; a.line.fill.background(); a.shadow.inherit=False
+def arrow(s,x,y,w=0.4,h=0.2,color=MUTE,down=False):
+    a=s.shapes.add_shape(MSO_SHAPE.DOWN_ARROW if down else MSO_SHAPE.RIGHT_ARROW,
+                         In(x),In(y),In(w),In(h))
+    a.fill.solid(); a.fill.fore_color.rgb=color; a.line.fill.background(); a.shadow.inherit=False
     return a
 
-def bullets(s, x, y, w, items, size=14, gap=0.34, color=INK, bullet="—"):
-    for i, it in enumerate(items):
-        txt(s, x, y + i*gap, 0.25, 0.3, bullet, size, True, ACC)
-        txt(s, x+0.32, y + i*gap, w-0.32, 0.3, it, size, False, color)
+def bullets(s,x,y,w,items,size=14,gap=0.36,color=INK):
+    for i,it in enumerate(items):
+        txt(s,x,y+i*gap,0.22,0.3,"—",size,True,ACC)
+        txt(s,x+0.3,y+i*gap,w-0.3,0.35,it,size,False,color,line=1.2)
 
-def picture(s, name, x, y, w=None, h=None, border=True):
-    path = os.path.join(S, name)
-    iw, ih = Image.open(path).size
-    ar = ih / iw
-    if w and not h: h = w * ar
-    if h and not w: w = h / ar
-    pic = s.shapes.add_picture(path, In(x), In(y), In(w), In(h))
-    if border:
-        b = box(s, x, y, w, h, fill=None, border=LINE)
-    return pic
+def pic(s,name,x,y,w,h,top=0.0,bottom=0.0):
+    p=s.shapes.add_picture(os.path.join(S,name),In(x),In(y),In(w),In(h))
+    p.crop_top=top; p.crop_bottom=bottom
+    box(s,x,y,w,h,fill=None,border=LINE); return p
 
-def crop_pic(s, name, x, y, w, h, top=0.0, bottom=0.0):
-    """Place an image cropped vertically, scaled to fill the given w/h."""
-    path = os.path.join(S, name)
-    pic = s.shapes.add_picture(path, In(x), In(y), In(w), In(h))
-    pic.crop_top = top; pic.crop_bottom = bottom
-    box(s, x, y, w, h, fill=None, border=LINE)
-    return pic
+def note(s,t,color=MUTE): txt(s,0.75,6.88,11.9,0.35,t,11.5,False,color)
 
-def caption(s, x, y, w, text):
-    txt(s, x, y, w, 0.3, text, 11, False, MUTE, italic=True)
+# ══════════════════ 1 TITLE
+s=slide(); box(s,0,0,W,7.5,fill=BLACK,border=None)
+txt(s,1.1,2.4,11,0.9,"ChainID Vault",52,True,WHITE)
+b=s.shapes.add_shape(MSO_SHAPE.RECTANGLE,In(1.1),In(3.45),In(1.6),In(0.07))
+b.fill.solid(); b.fill.fore_color.rgb=ACC; b.line.fill.background(); b.shadow.inherit=False
+txt(s,1.1,3.8,10.8,0.6,"Anyone can prove who controls an asset —\nwithout trusting whoever runs the system.",20,False,RGBColor(0xD6,0xD3,0xCD),line=1.3)
+txt(s,1.1,5.5,11,0.3,"SIH26125  ·  Bharat Electronics Limited  ·  Blockchain & Cybersecurity",13,True,ACC)
+txt(s,1.1,5.9,11,0.3,"Smart India Hackathon 2026",12.5,False,RGBColor(0xA3,0xA0,0x99))
 
-def note(s, text, color=MUTE):
-    txt(s, 0.75, 6.85, 11.8, 0.35, text, 11.5, False, color)
+# ══════════════════ 2 THE GATE  (the story — common ground)
+s=slide()
+y=head(s,"Speaker 1 · Start here","Everyone here has already used this system",
+       "A gate. A guard. A card. It works — until it doesn't.")
+box(s,0.75,y+0.1,5.6,3.6,fill=SOFT,border=LINE)
+txt(s,1.05,y+0.35,5.0,0.3,"AT A UNIVERSITY GATE",11,True,MUTE)
+for i,(q,a) in enumerate([("Who are you?","The guard looks at your card."),
+                          ("Should you be here?","He checks you against a list."),
+                          ("Did anyone record it?","He writes your name in a register.")]):
+    yy=y+0.75+i*0.92
+    txt(s,1.05,yy,5.0,0.3,q,16,True,INK)
+    txt(s,1.05,yy+0.32,5.0,0.3,a,13,False,MUTE)
+box(s,6.75,y+0.1,5.85,3.6,fill=REDBG,border=RED)
+txt(s,7.05,y+0.35,5.2,0.3,"WHERE IT QUIETLY FAILS",11,True,RED)
+for i,(t,d) in enumerate([("The card is not the person",
+                           "Borrowed, cloned, or simply held by someone else."),
+                          ("He waves through the face he knows",
+                           "The rule stops being checked. It becomes memory."),
+                          ("The graduate's card still opens the gate",
+                           "They left last year. Nobody told the gate."),
+                          ("The register is the guard's own notebook",
+                           "The record is kept by the person it would hold accountable.")]):
+    yy=y+0.72+i*0.72
+    txt(s,7.05,yy,5.2,0.28,t,14,True,INK)
+    txt(s,7.05,yy+0.28,5.2,0.3,d,11.5,False,MUTE,line=1.15)
+txt(s,0.75,y+3.9,11.9,0.4,"Nobody at that gate is doing anything wrong. The system is simply built on trust rather than proof.",17,True,INK)
+note(s,"Hold this picture. Every problem in the next ten minutes is this gate, with higher stakes.")
 
-# ══════════════════════════════════════════ 1 — TITLE
-s = slide()
-box(s, 0, 0, W, 7.5, fill=BLACK, border=None)
-txt(s, 1.1, 2.35, 11, 0.9, "ChainID Vault", 54, True, WHITE)
-bar = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, In(1.1), In(3.42), In(1.6), In(0.07))
-bar.fill.solid(); bar.fill.fore_color.rgb = ACC; bar.line.fill.background(); bar.shadow.inherit=False
-txt(s, 1.1, 3.75, 10.5, 0.5, "Identity, access and asset custody enforced by smart contracts —\nnot by a database an administrator can edit.", 19, False, RGBColor(0xD6,0xD3,0xCD), line=1.35)
-txt(s, 1.1, 5.35, 11, 0.3, "SIH26125  ·  Bharat Electronics Limited  ·  Blockchain & Cybersecurity", 13, True, ACC)
-txt(s, 1.1, 5.75, 11, 0.3, "Smart India Hackathon 2026   |   Working prototype — 45 contract tests passing", 12.5, False, RGBColor(0xA3,0xA0,0x99))
+# ══════════════════ 3 SAME GATE, HIGHER STAKES
+s=slide()
+y=head(s,"Speaker 1 · The real setting","Now the gate is a defence facility",
+       "Same three checks. Same failure modes. Consequences that do not stay on campus.")
+rows=[("Who are you?","Student ID card","A contractor's credentials"),
+      ("Should you be here?","On the guard's list","Cleared for this equipment, today"),
+      ("Did anyone record it?","A notebook at the gate","The custody record for controlled equipment"),
+      ("What if they left?","Card still opens the gate","Assets still issued in their name")]
+box(s,0.75,y+0.1,11.85,0.42,fill=BLACK,border=None)
+txt(s,1.0,y+0.19,3.2,0.25,"THE QUESTION",10.5,True,ACC)
+txt(s,4.6,y+0.19,3.4,0.25,"AT THE UNIVERSITY",10.5,True,WHITE)
+txt(s,8.6,y+0.19,3.8,0.25,"AT A DEFENCE FACILITY",10.5,True,WHITE)
+yy=y+0.52
+for i,(q,a,c) in enumerate(rows):
+    box(s,0.75,yy,11.85,0.72,fill=WHITE if i%2==0 else SOFT,border=LINE)
+    txt(s,1.0,yy+0.2,3.4,0.32,q,14.5,True,INK)
+    txt(s,4.6,yy+0.22,3.7,0.3,a,12.5,False,MUTE)
+    txt(s,8.6,yy+0.22,3.9,0.3,c,12.5,False,RED if i==3 else INK)
+    yy+=0.72
+box(s,0.75,yy+0.25,11.85,0.95,fill=SOFT,border=LINE)
+txt(s,1.05,yy+0.44,11.3,0.6,"The last row is the one that costs money. Access gets removed on someone's last day.\nThe equipment they were holding does not remove itself.",16,True,INK,line=1.28)
+note(s,"")
 
-# ══════════════════════════════════════════ 2 — THE PROBLEM
-s = slide()
-y = header(s, "Speaker 1 · The Problem", "Every control ends at the database",
-           "Identity, permissions and custody all resolve to rows somebody can write to.")
-box(s, 0.75, y+0.05, 5.6, 3.5, fill=SOFT, border=LINE)
-txt(s, 1.05, y+0.3, 5.0, 0.3, "HOW IT WORKS TODAY", 11, True, MUTE)
-for i, (t, d) in enumerate([
-    ("Corporate IAM", "Who exists, and what they may do"),
-    ("Asset register", "Which item is issued to whom"),
-    ("Audit log", "A table recording the two above"),
-]):
-    yy = y+0.72+i*0.85
-    box(s, 1.05, yy, 5.0, 0.68, fill=WHITE, border=LINE)
-    txt(s, 1.25, yy+0.11, 4.6, 0.25, t, 14, True, INK)
-    txt(s, 1.25, yy+0.37, 4.6, 0.22, d, 11.5, False, MUTE)
-box(s, 6.75, y+0.05, 5.85, 3.5, fill=REDBG, border=RED)
-txt(s, 7.05, y+0.3, 5.2, 0.3, "THE SINGLE FAILURE POINT", 11, True, RED)
-txt(s, 7.05, y+0.68, 5.25, 1.0,
-    "All three are rows in a database.\nAnyone who can write to it can grant a role,\nreassign an asset, and delete the log entry\nthat would have shown they did.", 15, True, INK, line=1.3)
-bullets(s, 7.05, y+2.05, 5.2, [
-    "A compromised administrator account",
-    "An insider with legitimate access",
-    "An attacker who reached the database",
-], 12.5, 0.32, INK)
-txt(s, 0.75, y+3.8, 11.8, 0.4,
-    "The audit trail is stored by the very system it is supposed to hold accountable.", 17, True, RED)
-note(s, "This is not a software-quality problem. Better code does not change where the enforcement lives.")
+# ══════════════════ 4 THE TRUST PROBLEM
+s=slide()
+y=head(s,"Speaker 1 · The real problem","The problem is not missing data. It is that no record outranks another.",
+       "Three systems, three answers, and no way to settle which one is right.")
+labels=[("IDENTITY SYSTEM","says the person is valid"),
+        ("ASSET REGISTER","says who holds the item"),
+        ("THE PAPERWORK","says something else again")]
+x=0.75
+for t,d in labels:
+    box(s,x,y+0.15,3.7,1.15,fill=WHITE,border=LINE)
+    txt(s,x+0.25,y+0.38,3.2,0.25,t,11.5,True,INK)
+    txt(s,x+0.25,y+0.68,3.2,0.35,d,12.5,False,MUTE)
+    arrow(s,x+1.65,y+1.4,0.35,0.2,MUTE,down=True)
+    x+=4.05
+box(s,0.75,y+1.75,11.85,0.85,fill=BLACK,border=None)
+txt(s,1.05,y+1.95,11.3,0.45,"All three are maintained by the same organisation.",18,True,WHITE)
+box(s,0.75,y+2.85,11.85,1.15,fill=REDBG,border=RED)
+txt(s,1.05,y+3.08,11.3,0.75,"And the log that would show a record was altered is stored by the same system that would have altered it.\nWhen the party who creates the record also controls it, nobody outside can verify anything.",16,True,RED,line=1.32)
+note(s,"This is the sentence the whole pitch turns on. Say it slowly.")
 
-# ══════════════════════════════════════════ 3 — THE INCIDENT
-s = slide()
-y = header(s, "Speaker 1 · A Real Incident", "The contractor who never left the system",
-           "A defence facility, an ending engagement, and a piece of controlled equipment.")
-steps = [
-    ("Day 1", "Contractor onboarded", "Directory account created,\nrow added to the register", None),
-    ("Day 40", "Equipment issued", "Spectrum analyser logged\nagainst their name", None),
-    ("Last day", "Account disabled", "IAM access removed —\nbut the register is untouched", "warn"),
-    ("Day 54", "Equipment presented", "At another plant, with\naltered custody paperwork", "bad"),
-    ("Result", "Accepted", "Nothing available to the\nreceiving officer says otherwise", "bad"),
-]
-x = 0.75
-for i, (when, what, detail, tone) in enumerate(steps):
-    fill = REDBG if tone == "bad" else (RGBColor(0xFD,0xF3,0xE0) if tone=="warn" else WHITE)
-    bd = RED if tone == "bad" else (RGBColor(0xD8,0x9A,0x2E) if tone=="warn" else LINE)
-    box(s, x, y+0.15, 2.15, 2.5, fill=fill, border=bd)
-    txt(s, x+0.18, y+0.33, 1.8, 0.22, when.upper(), 10, True, ACC if tone is None else bd)
-    txt(s, x+0.18, y+0.62, 1.85, 0.5, what, 13.5, True, INK)
-    txt(s, x+0.18, y+1.22, 1.85, 1.1, detail, 11, False, MUTE, line=1.25)
-    if i < 4: arrow(s, x+2.24, y+1.3, 0.32)
-    x += 2.5
-box(s, 0.75, y+2.95, 11.85, 1.05, fill=SOFT, border=LINE)
-txt(s, 1.05, y+3.14, 11.3, 0.7,
-    "Three separate records disagreed, and every one of them was editable by whoever held the credentials.\nThe receiving officer had no independent way to check any of it.", 15, False, INK, line=1.3)
-note(s, "Offboarding is where custody systems fail, because disabling access and returning assets are two different systems.")
+# ══════════════════ 5 THE NUMBER
+s=slide()
+y=head(s,"Speaker 2 · The stakes","₹1,237 crore of stores nobody could reconcile")
+txt(s,0.75,y+0.15,7.4,1.4,"₹1,237 crore",76,True,RED)
+txt(s,0.75,y+1.6,7.4,0.8,"of the Ordnance Factory Board's stores were non-active —\nnot moving, surplus, or obsolete. Out of ₹6,172 crore held.",18,False,INK,line=1.3)
+txt(s,0.75,y+2.5,7.4,0.3,"CAG Audit Report No. 10 of 2024, Government of India",12,True,MUTE)
+box(s,0.75,y+2.95,7.4,0.95,fill=SOFT,border=LINE)
+txt(s,1.0,y+3.14,6.9,0.6,"Holding time rose from 214 days of consumption to 344.\nAfter corporatisation, CAG went back: 21% still non-active in 2023.",13.5,False,INK,line=1.3)
+box(s,8.45,y+0.15,4.15,3.75,fill=REDBG,border=RED)
+txt(s,8.7,y+0.4,3.6,0.3,"WHAT WE ARE NOT SAYING",11,True,RED)
+txt(s,8.7,y+0.78,3.65,1.3,"We are not claiming a blockchain\nwould have recovered that money.\nWe cannot prove that, so we will\nnot say it.",13.5,True,INK,line=1.3)
+txt(s,8.7,y+2.2,3.6,0.3,"WHAT IT DOES SHOW",11,True,RED)
+txt(s,8.7,y+2.58,3.65,1.2,"This is what it looks like when an\norganisation can no longer reconcile\nits own custody records.\n\nThat is a verification problem.",13.5,False,INK,line=1.3)
+note(s,"Documented external problem — not a claim about our system.")
 
-# ══════════════════════════════════════════ 4 — TRUST BOUNDARY
-s = slide()
-y = header(s, "Speaker 1 · Why It Cannot Be Patched", "The people who need the evidence are outside your walls",
-           "A record is only useful to someone who does not already trust the operator.")
-box(s, 0.75, y+0.15, 5.5, 3.6, fill=WHITE, border=LINE)
-txt(s, 1.0, y+0.42, 5.0, 0.3, "INSIDE THE TRUST BOUNDARY", 11, True, MUTE)
-txt(s, 1.0, y+0.78, 5.0, 0.4, "\"Our database says so.\"", 20, True, INK)
-bullets(s, 1.0, y+1.42, 5.0, [
-    "Works for staff who already trust IT",
-    "Works while nobody disputes anything",
-    "Fails the moment it is challenged",
-], 13, 0.36)
-box(s, 6.85, y+0.15, 5.75, 3.6, fill=GRNBG, border=GRN)
-txt(s, 7.1, y+0.42, 5.2, 0.3, "OUTSIDE IT — WHO ACTUALLY NEEDS PROOF", 11, True, GRN)
-for i, (who, why) in enumerate([
-    ("Internal auditor", "Must not depend on the operator's own copy"),
-    ("Receiving officer, another site", "Has no access to your register"),
-    ("Customer accepting delivery", "Wants provenance, not assurances"),
-    ("Investigator after an incident", "Needs a record nobody could edit"),
-]):
-    yy = y+0.85+i*0.68
-    txt(s, 7.1, yy, 5.2, 0.25, who, 13.5, True, INK)
-    txt(s, 7.1, yy+0.26, 5.2, 0.25, why, 11.5, False, MUTE)
-txt(s, 0.75, y+4.0, 11.85, 0.4,
-    "For everyone on the right, an editable database is an assertion. It is not evidence.", 17, True, INK)
-note(s, "This is the gap the problem statement describes, and it is a trust problem rather than a technology problem.")
+# ══════════════════ 6 WHY NOW
+s=slide()
+y=head(s,"Speaker 2 · Why now","The old approach was given a decade, and the gap did not close",
+       "Reorganising the institution did not fix a problem that lives in the records.")
+tl=[("2016-17","Stores held 214 days of consumption","ok"),
+    ("2020-21","Risen to 344 days. ₹1,237 crore non-active.","bad"),
+    ("Oct 2021","OFB corporatised into seven defence PSUs","warn"),
+    ("2023","CAG returns. 21% of sampled stores still non-active.","bad")]
+x=0.75
+for i,(when,what,tone) in enumerate(tl):
+    fill=REDBG if tone=="bad" else (RGBColor(0xFD,0xF3,0xE0) if tone=="warn" else WHITE)
+    bd=RED if tone=="bad" else (RGBColor(0xB4,0x53,0x09) if tone=="warn" else LINE)
+    box(s,x,y+0.2,2.75,1.9,fill=fill,border=bd)
+    txt(s,x+0.22,y+0.42,2.3,0.25,when,12,True,bd if tone!="ok" else MUTE)
+    txt(s,x+0.22,y+0.78,2.35,1.1,what,13,True,INK,line=1.25)
+    if i<3: arrow(s,x+2.82,y+1.05,0.3,0.18)
+    x+=3.05
+box(s,0.75,y+2.45,11.85,1.05,fill=BLACK,border=None)
+txt(s,1.05,y+2.66,11.3,0.65,"More contractors, more sites, more handoffs between separate entities — and the same\nrecords that could not be reconciled before.",17,True,WHITE,line=1.3)
+txt(s,0.75,y+3.75,11.85,0.4,"The problem was never the warehouse. It was that no party could prove which record was correct.",16,True,RED)
+note(s,"")
 
-# ══════════════════════════════════════════ 5 — WHAT IT IS
-s = slide()
-y = header(s, "Speaker 2 · The Solution", "Three things, governed on-chain",
-           "ChainID Vault moves the enforcement point out of application code and into contract code.")
-ent = [
-    ("IDENTITY", "A recognised keypair", [
-        "Lifecycle status: Active / Suspended / Revoked",
-        "Hash of an off-chain personnel record",
-        "Control proven by signature, never asserted",
-    ], BLU),
-    ("ASSET", "One controlled item", [
-        "ERC-721 token — unique, non-duplicable",
-        "Bound to a verified identity at all times",
-        "Hash of its custody document anchored",
-    ], GRN),
-    ("ROLE", "A permission grant", [
-        "Admin · Manager · Auditor · User",
-        "Checked inside the function it guards",
-        "Held per identity, per contract",
-    ], RGBColor(0xC9,0x8A,0x2E)),
-]
-x = 0.75
-for name, sub, items, col in ent:
-    box(s, x, y+0.15, 3.85, 3.75, fill=WHITE, border=LINE)
-    tag = box(s, x, y+0.15, 3.85, 0.1, fill=col, border=None)
-    txt(s, x+0.28, y+0.45, 3.3, 0.3, name, 12, True, col)
-    txt(s, x+0.28, y+0.78, 3.3, 0.35, sub, 17, True, INK)
-    for i, it in enumerate(items):
-        txt(s, x+0.28, y+1.35+i*0.66, 0.18, 0.3, "•", 13, True, col)
-        txt(s, x+0.52, y+1.35+i*0.66, 3.1, 0.6, it, 12, False, MUTE, line=1.25)
-    x += 4.05
-box(s, 0.75, y+4.1, 11.85, 0.72, fill=BLACK, border=None)
-txt(s, 1.05, y+4.28, 11.3, 0.4,
-    "Ownership is not a claim in our system. It is a state a contract will only change if its rules allow it.",
-    15, True, WHITE)
-note(s, "Everything above is implemented and covered by tests. Nothing on this slide is planned work.")
+# ══════════════════ 7 THREE QUESTIONS
+s=slide()
+y=head(s,"Speaker 2 · The insight","Every critical action comes down to three questions")
+qs=[("WHO ARE YOU?","Identity","Is this a real, currently valid person — not just a card?",BLU),
+    ("WHAT ARE YOU ALLOWED TO DO?","Permission","Being known is not the same as being allowed.",RGBColor(0xC9,0x8A,0x2E)),
+    ("CAN ANYONE PROVE WHAT HAPPENED?","Proof","Afterwards, can an outsider check it — and see if it changed?",GRN)]
+yy=y+0.2
+for q,tag,d,col in qs:
+    box(s,0.75,yy,11.85,1.32,fill=WHITE,border=col)
+    box(s,0.75,yy,0.12,1.32,fill=col,border=None)
+    txt(s,1.15,yy+0.22,7.5,0.42,q,26,True,INK)
+    txt(s,1.15,yy+0.78,7.5,0.32,d,14,False,MUTE)
+    txt(s,9.4,yy+0.42,3.0,0.4,tag,17,True,col,PP_ALIGN.RIGHT)
+    yy+=1.48
+txt(s,0.75,yy+0.12,11.85,0.4,"Miss any one and the action cannot be trusted. We built ChainID Vault around exactly these three.",17,True,INK)
+note(s,"The gate answered all three badly. So does most enterprise software.")
 
-# ══════════════════════════════════════════ 6 — ARCHITECTURE
-s = slide()
-y = header(s, "Speaker 2 · Architecture", "No backend. No database. On purpose.",
-           "The browser calls the chain directly — the component we removed is the one that fails.")
-box(s, 0.9, y+0.25, 3.0, 1.5, fill=WHITE, border=LINE)
-txt(s, 1.1, y+0.5, 2.6, 0.3, "BROWSER", 10.5, True, MUTE)
-txt(s, 1.1, y+0.8, 2.6, 0.3, "React + ethers.js", 15, True, INK)
-txt(s, 1.1, y+1.15, 2.6, 0.4, "Six screens. Holds no\nauthority whatsoever.", 11, False, MUTE, line=1.2)
-arrow(s, 4.05, y+0.9, 0.7, INK)
-txt(s, 3.95, y+1.18, 0.95, 0.25, "JSON-RPC", 9.5, True, MUTE, PP_ALIGN.CENTER)
-box(s, 4.95, y+0.15, 3.5, 1.7, fill=BLACK, border=None)
-txt(s, 5.2, y+0.4, 3.0, 0.3, "PERMISSIONED CHAIN", 10.5, True, ACC)
-txt(s, 5.2, y+0.72, 3.0, 0.3, "IdentityRegistry", 14, True, WHITE)
-txt(s, 5.2, y+1.05, 3.0, 0.3, "AssetNFT", 14, True, WHITE)
-txt(s, 5.2, y+1.42, 3.0, 0.3, "All authority lives here", 10.5, False, RGBColor(0xA3,0xA0,0x99))
-arrow(s, 8.6, y+0.9, 0.7, INK)
-box(s, 9.5, y+0.25, 3.1, 1.5, fill=SOFT, border=LINE)
-txt(s, 9.72, y+0.5, 2.7, 0.3, "ANY VERIFIER", 10.5, True, MUTE)
-txt(s, 9.72, y+0.8, 2.7, 0.3, "No account needed", 15, True, INK)
-txt(s, 9.72, y+1.15, 2.7, 0.4, "Reads the same record\nwithout trusting us.", 11, False, MUTE, line=1.2)
-box(s, 0.9, y+2.15, 11.7, 1.65, fill=REDBG, border=RED)
-txt(s, 1.2, y+2.35, 11.2, 0.3, "WHAT IS DELIBERATELY ABSENT", 11, True, RED)
-absent = [("No backend server", "Nothing to compromise between user and chain"),
-          ("No database", "No editable row for a role, an owner or a log"),
-          ("No public network", "Runs on a permissioned chain — no gas, no exposure")]
-xx = 1.2
-for t, d in absent:
-    txt(s, xx, y+2.7, 3.7, 0.3, t, 14, True, INK)
-    txt(s, xx, y+3.0, 3.6, 0.5, d, 11.5, False, MUTE, line=1.25)
-    xx += 3.85
-note(s, "A database would only reintroduce the component whose editability this project exists to remove.")
+# ══════════════════ 8 WHAT IT IS
+s=slide()
+y=head(s,"Speaker 3 · The solution","ChainID Vault: verify the identity, enforce the permission, prove the action")
+box(s,0.75,y+0.1,11.85,1.15,fill=BLACK,border=None)
+txt(s,1.05,y+0.32,11.3,0.7,"Anyone can prove who controls an asset — without trusting whoever runs the system.",21,True,WHITE)
+p3=[("VERIFY THE IDENTITY","Not that a record exists — that this person\ncontrols it, and that it is active right now.",BLU),
+    ("ENFORCE THE PERMISSION","The rule is applied every time, automatically.\nNobody has to remember to check.",RGBColor(0xC9,0x8A,0x2E)),
+    ("PROVE THE ACTION","The record can be checked by someone\noutside the organisation entirely.",GRN)]
+x=0.75
+for t,d,col in p3:
+    box(s,x,y+1.5,3.85,1.9,fill=WHITE,border=LINE)
+    box(s,x,y+1.5,3.85,0.1,fill=col,border=None)
+    txt(s,x+0.28,y+1.78,3.3,0.3,t,13,True,col)
+    txt(s,x+0.28,y+2.18,3.35,1.0,d,13,False,INK,line=1.3)
+    x+=4.05
+box(s,0.75,y+3.6,11.85,0.62,fill=SOFT,border=LINE)
+txt(s,1.05,y+3.76,11.3,0.35,"Notice what we have not mentioned yet: any technology at all.",15,True,MUTE)
+note(s,"")
 
-# ══════════════════════════════════════════ 7 — DATA CLASSIFICATION
-s = slide()
-y = header(s, "Speaker 2 · Data Design", "What goes on-chain, and what must never",
-           "A blockchain is permanent and public. That makes it the wrong home for personal data.")
-cols = [
-    ("ON-CHAIN", GRN, GRNBG, "Small, consensus-critical, must be tamper-evident", [
-        "Identity existence and lifecycle status",
-        "Role grants and revocations",
-        "Asset ownership",
-        "Every state-change event",
-        "Document fingerprints (hashes)",
-    ]),
-    ("OFF-CHAIN", BLU, RGBColor(0xEA,0xF3,0xFB), "Sensitive, large, sometimes legally erasable", [
-        "Personnel records and personal data",
-        "Equipment specification sheets",
-        "Signed custody paperwork",
-        "Calibration certificates",
-        "Anything a person could be identified by",
-    ]),
-    ("ANCHORED", RGBColor(0xC9,0x8A,0x2E), RGBColor(0xFD,0xF3,0xE0), "The bridge: proof without exposure", [
-        "keccak256 of the off-chain document",
-        "Chain never sees the contents",
-        "Anyone can prove a document is the",
-        "one registered — change one byte",
-        "and verification fails",
-    ]),
-]
-x = 0.75
-for name, col, bg, sub, items in cols:
-    box(s, x, y+0.15, 3.85, 4.15, fill=bg, border=col)
-    txt(s, x+0.28, y+0.42, 3.3, 0.3, name, 13, True, col)
-    txt(s, x+0.28, y+0.78, 3.3, 0.55, sub, 11.5, True, MUTE, line=1.25)
-    for i, it in enumerate(items):
-        txt(s, x+0.28, y+1.5+i*0.5, 3.35, 0.45, "· " + it, 12, False, INK, line=1.2)
-    x += 4.05
-note(s, "Privacy by construction: personal data stays erasable off-chain, while its integrity remains provable on-chain.")
+# ══════════════════ 9 THE ACTION FLOW
+s=slide()
+y=head(s,"Speaker 3 · How it works","What happens the moment somebody acts",
+       "The diagram follows the action, not the components.")
+steps=[("Someone acts","Issue this equipment\nto this person",WHITE,LINE),
+       ("Is the identity active?","Not 'did it ever exist'.\nActive right now.",BLUBG,BLU),
+       ("Is this allowed?","Does this identity hold\nthis permission?",RGBColor(0xFD,0xF3,0xE0),RGBColor(0xC9,0x8A,0x2E)),
+       ("Refuse or allow","Automatic. Nobody has\nto remember to check.",SOFT,INK),
+       ("Record created","A receipt of what\nactually happened.",GRNBG,GRN),
+       ("Anyone can check","Including people outside\nthe organisation.",GRNBG,GRN)]
+x=0.6
+for i,(t,d,f,b) in enumerate(steps):
+    box(s,x,y+0.3,1.85,2.0,fill=f,border=b)
+    txt(s,x+0.15,y+0.5,1.6,0.6,t,12.5,True,INK,line=1.15)
+    txt(s,x+0.15,y+1.18,1.62,0.9,d,10.5,False,MUTE,line=1.2)
+    if i<5: arrow(s,x+1.9,y+1.2,0.25,0.16,INK)
+    x+=2.1
+box(s,0.6,y+2.6,12.15,0.85,fill=REDBG,border=RED)
+txt(s,0.9,y+2.78,11.6,0.5,"If either check fails, the action does not happen. Not a warning, not a note in a log for somebody to find later —\nthe action does not happen.",15,True,RED,line=1.3)
+box(s,0.6,y+3.62,12.15,0.62,fill=SOFT,border=LINE)
+txt(s,0.9,y+3.78,11.6,0.35,"Only the last two steps need anything unusual. That is where our technology choice matters — and nowhere else.",14.5,False,INK)
+note(s,"")
 
-# ══════════════════════════════════════════ 8 — CONTRACTS
-s = slide()
-y = header(s, "Speaker 2 · The Contracts", "Two contracts, one chokepoint",
-           "Every rule is enforced where it cannot be bypassed by calling a different function.")
-box(s, 0.75, y+0.15, 5.8, 2.5, fill=WHITE, border=LINE)
-txt(s, 1.05, y+0.4, 5.2, 0.3, "IdentityRegistry.sol", 17, True, INK)
-bullets(s, 1.05, y+0.85, 5.2, [
-    "registerIdentity — admin only",
-    "suspend / reactivate / revokeIdentity",
-    "rotateKey — recover from key loss",
-    "proveControl — EIP-712 signature check",
-    "Paginated reads for scale",
-], 12, 0.33)
-box(s, 6.8, y+0.15, 5.8, 2.5, fill=WHITE, border=LINE)
-txt(s, 7.1, y+0.4, 5.2, 0.3, "AssetNFT.sol", 17, True, INK)
-bullets(s, 7.1, y+0.85, 5.2, [
-    "mintAsset — admin only, active recipient",
-    "transferAsset — owner, admin or manager",
-    "verifyAsset — open to anyone",
-    "verifyAssetIntegrity — tamper detection",
-    "Calls the registry before every movement",
-], 12, 0.33)
-box(s, 0.75, y+2.85, 11.85, 1.5, fill=BLACK, border=None)
-txt(s, 1.05, y+3.05, 11.3, 0.3, "THE INVARIANT", 11, True, ACC)
-txt(s, 1.05, y+3.38, 11.3, 0.35, "An asset may only ever be held by an active identity.", 19, True, WHITE)
-txt(s, 1.05, y+3.78, 11.3, 0.4,
-    "Enforced inside _update — the one internal function every mint, transfer and burn passes through.", 13, False, RGBColor(0xD6,0xD3,0xCD))
-note(s, "45 automated tests cover these, including the negative cases: replay, impersonation, expiry and tampering.")
+prs.save(OUT); print("part 1 done:", len(prs.slides.__iter__.__self__._sldIdLst))
 
-# ══════════════════════════════════════════ 9 — PIPELINE SCREENSHOT
-s = slide()
-y = header(s, "Speaker 3 · What We Built", "The workflow, not a pile of screens",
-           "The product opens on the actual custody process, each stage runnable live.")
-crop_pic(s, "01-pipeline-start.png", 0.75, y+0.1, 7.6, 4.3, top=0.0, bottom=0.40)
-box(s, 8.6, y+0.1, 4.0, 4.3, fill=SOFT, border=LINE)
-txt(s, 8.85, y+0.35, 3.5, 0.3, "SIX STAGES", 11, True, MUTE)
-for i, st in enumerate(["Onboard the contractor","Issue controlled equipment",
-                        "Prove identity at the gate","Verify item and paperwork",
-                        "Engagement ends — offboard","Issue to them anyway → refused"]):
-    col = RED if i == 5 else INK
-    txt(s, 8.85, y+0.72+i*0.50, 0.3, 0.3, f"0{i+1}", 11, True, ACC)
-    txt(s, 9.25, y+0.72+i*0.50, 3.1, 0.45, st, 12.5, i==5, col, line=1.15)
-txt(s, 8.85, y+3.82, 3.5, 0.5, "Each stage states how it is done today\nand what that leaves open.", 10.5, False, MUTE, line=1.2)
-note(s, "Screenshot from the running prototype. Every button on it sends a real transaction.")
+# ══════════════════ 10 WHY BLOCKCHAIN
+s=slide()
+y=head(s,"Speaker 3 · The technology choice","Blockchain is where we keep the proof, not the files",
+       "One job, precisely defined. We are not claiming it is better at everything.")
+box(s,0.75,y+0.1,11.85,0.95,fill=SOFT,border=LINE)
+txt(s,1.05,y+0.28,11.3,0.6,"A database is excellent at storing and managing information. But for records that must survive a dispute, the\nquestion is different: can the organisation that changes the record also rewrite its history, undetected?",15,True,INK,line=1.3)
+cols=[("STAYS WHERE IT ALREADY IS",BLU,BLUBG,
+       ["Personnel files","Equipment spec sheets","Custody paperwork","Calibration certificates"],
+       "We are not asking anyone to\nmove their documents anywhere."),
+      ("THE BRIDGE",RGBColor(0xC9,0x8A,0x2E),RGBColor(0xFD,0xF3,0xE0),
+       ["A digital fingerprint","of each document"],
+       "Change one character and the\nfingerprint no longer matches."),
+      ("ON THE CHAIN",GRN,GRNBG,
+       ["Who is a valid identity","What each one may do","Every asset movement","Every status change"],
+       "Small, and the only part that\nmust be tamper-evident.")]
+x=0.75
+for t,col,bg,items,foot in cols:
+    box(s,x,y+1.25,3.85,3.0,fill=bg,border=col)
+    txt(s,x+0.25,y+1.48,3.4,0.28,t,12,True,col)
+    for i,it in enumerate(items):
+        txt(s,x+0.25,y+1.88+i*0.34,3.4,0.3,"· "+it,13,False,INK)
+    txt(s,x+0.25,y+3.5,3.42,0.6,foot,11.5,True,MUTE,line=1.25)
+    x+=4.05
+arrow(s,4.68,y+2.6,0.28,0.18,INK); arrow(s,8.73,y+2.6,0.28,0.18,INK)
+note(s,"Runs today on a local chain. The deployment target is a permissioned network such as Hyperledger Besu.")
 
-# ══════════════════════════════════════════ 10 — ADMIN + IDENTITIES
-s = slide()
-y = header(s, "Speaker 3 · Operations", "Issuing, governing and revoking",
-           "Day-to-day tools for the security administrator and the stores desk.")
-crop_pic(s, "02-admin.png", 0.75, y+0.1, 5.85, 3.3, bottom=0.34)
-caption(s, 0.75, y+3.48, 5.85, "Admin — register an identity, assign a role, issue equipment")
-crop_pic(s, "03-identities.png", 6.75, y+0.1, 5.85, 3.3, bottom=0.34)
-caption(s, 6.75, y+3.48, 5.85, "Identities — lifecycle control and cryptographic proof of control")
-box(s, 0.75, y+3.95, 11.85, 0.85, fill=GRNBG, border=GRN)
-txt(s, 1.05, y+4.12, 11.3, 0.5,
-    "Suspending or revoking takes effect on-chain immediately. A non-active identity cannot receive an asset\nby any route, and cannot prove control.", 13.5, False, INK, line=1.3)
-note(s, "Role badges are read from the chain, not from application state.")
+# ══════════════════ 11 DEMO — REFUSE
+s=slide()
+y=head(s,"Speaker 4 · Demo","Watch the system refuse something it should refuse",
+       "The contractor from slide 3. Engagement ended, identity revoked.")
+pic(s,"08-rejection.png",0.75,y+0.15,7.5,3.05,bottom=0.45)
+box(s,8.5,y+0.15,4.1,3.05,fill=BLACK,border=None)
+txt(s,8.78,y+0.4,3.55,0.3,"WHAT JUST HAPPENED",11,True,ACC)
+for i,t in enumerate(["An administrator tried to\nissue equipment to them.",
+                      "The system refused.",
+                      "Not a warning. Not a note\nin a log. It did not happen."]):
+    txt(s,8.78,y+0.78+i*0.72,3.55,0.65,t,13.5,i==1,WHITE if i!=1 else ACC,line=1.25)
+txt(s,8.78,y+2.95-0.05,3.55,0.3,"",11,True,ACC)
+box(s,0.75,y+3.35,11.85,1.0,fill=REDBG,border=RED)
+txt(s,1.05,y+3.55,11.3,0.65,"The account that just tried holds every privilege in this system. It created that identity. It issued the original\nequipment. It still cannot do this. A database administrator can always override the database. Here, nobody can.",15,True,RED,line=1.3)
+note(s,"Pause here. Let it sit before moving on.")
 
-# ══════════════════════════════════════════ 11 — VERIFY
-s = slide()
-y = header(s, "Speaker 3 · Verification", "The screen that needs no login",
-           "A gate officer checks the item and the paperwork against the chain itself.")
-crop_pic(s, "06-verify-authentic.png", 0.75, y+0.1, 5.85, 3.5, bottom=0.28)
-caption(s, 0.75, y+3.68, 5.85, "Original custody document — verified authentic")
-crop_pic(s, "07-verify-tampered.png", 6.75, y+0.1, 5.85, 3.5, bottom=0.28)
-caption(s, 6.75, y+3.68, 5.85, "One word changed: RESTRICTED → UNCLASSIFIED — rejected")
-box(s, 0.75, y+4.1, 11.85, 0.72, fill=REDBG, border=RED)
-txt(s, 1.05, y+4.27, 11.3, 0.4,
-    "Nobody decided the second document was fake. Two hashes differ. That is arithmetic, not judgement.", 14.5, True, RED)
-note(s, "The document itself was never stored on-chain — only its fingerprint, so nothing sensitive was published.")
+# ══════════════════ 12 DEMO — ALLOW + PROOF
+s=slide()
+y=head(s,"Speaker 4 · Demo","Now watch it allow something it should allow",
+       "Same action. Active identity, correct permission.")
+pic(s,"06-verify-authentic.png",0.75,y+0.15,5.85,2.9,bottom=0.32)
+txt(s,0.75,y+3.12,5.85,0.3,"The original custody document — verified",11.5,False,MUTE,italic=True)
+pic(s,"07-verify-tampered.png",6.75,y+0.15,5.85,2.9,bottom=0.32)
+txt(s,6.75,y+3.12,5.85,0.3,"One word changed: RESTRICTED → UNCLASSIFIED — rejected",11.5,False,MUTE,italic=True)
+box(s,0.75,y+3.55,11.85,0.85,fill=SOFT,border=LINE)
+txt(s,1.05,y+3.73,11.3,0.5,"Nobody decided the second one was fake. Two fingerprints differ. That is arithmetic, not judgement —\nand this screen has no login, so someone who does not trust us can still run the check.",15,True,INK,line=1.3)
+note(s,"One thing absent from the history: the refused attempts. Nothing was allowed to happen, so nothing was recorded.")
 
-# ══════════════════════════════════════════ 12 — AUDIT
-s = slide()
-y = header(s, "Speaker 3 · The Audit Trail", "The log is the chain, not a table",
-           "Live, append-only, and reconstructable by anyone with read access.")
-crop_pic(s, "04-audit.png", 0.75, y+0.1, 7.4, 3.9, bottom=0.30)
-box(s, 8.45, y+0.1, 4.15, 3.9, fill=SOFT, border=LINE)
-txt(s, 8.7, y+0.35, 3.6, 0.3, "WHAT IS RECORDED", 11, True, MUTE)
-for i, it in enumerate(["Identity registered","Status changed","Role granted / revoked",
-                        "Asset issued","Asset transferred","Control proven"]):
-    txt(s, 8.7, y+0.72+i*0.36, 3.6, 0.3, "· " + it, 12, False, INK)
-txt(s, 8.7, y+2.95, 3.65, 0.85,
-    "And what is NOT there:\nrejected attempts. A reverted\ntransaction rolls back its own\nevents — nothing happened.", 12, True, RED, line=1.28)
-note(s, "Say this before a judge asks it. Expecting a 'rejected' row and not finding one is the usual confusion.")
+# ══════════════════ 13 WE ATTACKED IT
+s=slide()
+y=head(s,"Speaker 5 · Credibility","We attacked our own system and it broke",
+       "A red banner in our own interface proves nothing. So we switched the interface off.")
+box(s,0.75,y+0.1,7.0,2.55,fill=BLACK,border=None)
+txt(s,1.0,y+0.3,6.5,0.28,"$ npx hardhat run scripts/prove-it.ts",12,True,ACC,font="Consolas")
+term=[("  Contractor tries to issue equipment, UI bypassed",RGBColor(0xD6,0xD3,0xCD)),
+      ("   REFUSED BY THE CONTRACT",GRN),
+      ("  Asset moved to an unregistered address",RGBColor(0xD6,0xD3,0xCD)),
+      ("   REFUSED — recipient not an active identity",GRN),
+      ("  ADMIN issues to a revoked identity",RGBColor(0xD6,0xD3,0xCD)),
+      ("   REFUSED — even for the administrator",GRN)]
+for i,(t,c) in enumerate(term):
+    txt(s,1.0,y+0.68+i*0.3,6.5,0.26,t,11,i%2==1,c,font="Consolas")
+txt(s,1.0,y+2.28,6.5,0.28,"The web app was never running.",11.5,True,ACC,font="Consolas")
+stats=[("45","automated tests\npassing"),("3","flaws we found\nin our own code"),("4","kinds of invalid action\nrefused on-chain")]
+x=8.05
+for n,l in stats:
+    box(s,x,y+0.1,1.5,1.2,fill=WHITE,border=LINE)
+    txt(s,x,y+0.25,1.5,0.5,n,30,True,INK,PP_ALIGN.CENTER)
+    txt(s,x,y+0.8,1.5,0.4,l,9.5,False,MUTE,PP_ALIGN.CENTER,line=1.15)
+    x+=1.62
+box(s,8.05,y+1.45,4.55,1.2,fill=REDBG,border=RED)
+txt(s,8.3,y+1.62,4.1,0.95,"In the worst one, an asset could leave\nthe system entirely — and the audit log\nshowed nothing at all. We fixed it. The\nattacks are now tests that must keep failing.",12,False,INK,line=1.3)
+box(s,0.75,y+2.85,11.85,0.9,fill=SOFT,border=LINE)
+txt(s,1.05,y+3.05,11.3,0.5,"We did not only test that valid actions work. We tested that invalid ones are stopped —\nreplay, impersonation, expired proofs, revoked identities, tampered documents.",15,True,INK,line=1.3)
+note(s,"")
 
-# ══════════════════════════════════════════ 13 — THE AUDIT WE RAN
-s = slide()
-y = header(s, "Speaker 4 · Security", "We attacked our own system, and it broke",
-           "A security review of our contracts found a working exploit. Here is what and how.")
-box(s, 0.75, y+0.15, 5.8, 2.15, fill=REDBG, border=RED)
-txt(s, 1.05, y+0.38, 5.2, 0.3, "BEFORE", 11, True, RED)
-txt(s, 1.05, y+0.72, 5.25, 1.3,
-    "The rule \"assets only go to registered identities\"\nlived in one function. But the contract inherits\nthe ERC-721 standard, which brings its own public\ntransfer functions — and those never checked.", 12.5, False, INK, line=1.3)
-box(s, 6.8, y+0.15, 5.8, 2.15, fill=REDBG, border=RED)
-txt(s, 7.1, y+0.38, 5.2, 0.3, "WORSE", 11, True, RED)
-txt(s, 7.1, y+0.72, 5.25, 1.3,
-    "That escape emitted no audit event, and the trail\nfilters raw token events by design. The asset left\nthe system and the log showed nothing at all —\nan audit trail that omits events is worse than none.", 12.5, False, INK, line=1.3)
-box(s, 0.75, y+2.55, 11.85, 1.85, fill=GRNBG, border=GRN)
-txt(s, 1.05, y+2.78, 11.3, 0.3, "AFTER", 11, True, GRN)
-txt(s, 1.05, y+3.12, 11.3, 0.35, "The check moved to _update — the single chokepoint every transfer passes through.", 16, True, INK)
-txt(s, 1.05, y+3.55, 11.3, 0.7,
-    "No entry point can miss it, including any added later. The audit event is emitted from the same place, so no\nownership change can be silent. Three probes that previously succeeded as exploits are now regression tests.", 12.5, False, INK, line=1.3)
-note(s, "The lesson worth saying out loud: a rule enforced at every entry point separately is one you will eventually forget to enforce.")
+# ══════════════════ 14 WHAT CHANGES
+s=slide()
+y=head(s,"Speaker 5 · The shift","From trusting records to proving them")
+pairs=[("\"The system says this happened.\"","\"The record can be independently checked.\""),
+       ("\"An administrator decides whether to allow it.\"","\"The rules enforce themselves.\""),
+       ("\"History lives inside one system.\"","\"Critical actions leave a tamper-evident trail.\""),
+       ("\"They left, but the record still says they hold it.\"","\"A revoked identity cannot hold or receive.\"")]
+yy=y+0.2
+for a,b in pairs:
+    box(s,0.75,yy,5.4,0.92,fill=REDBG,border=RED)
+    txt(s,1.0,yy+0.28,4.9,0.4,a,13.5,False,RED,line=1.2)
+    arrow(s,6.35,yy+0.36,0.5,0.2,INK)
+    box(s,7.05,yy,5.55,0.92,fill=GRNBG,border=GRN)
+    txt(s,7.3,yy+0.28,5.05,0.4,b,13.5,True,GRN,line=1.2)
+    yy+=1.03
+box(s,0.75,yy+0.15,11.85,0.8,fill=BLACK,border=None)
+txt(s,1.05,yy+0.33,11.3,0.45,"What changes is not the screens. It is who has to be trusted for the record to mean anything.",16,True,WHITE)
+note(s,"No percentages here. We have not measured any, and we will not invent them.")
 
-# ══════════════════════════════════════════ 14 — FOUR REFUSALS
-s = slide()
-y = header(s, "Speaker 4 · Enforcement", "Four refusals, four different mechanisms",
-           "A system that only demonstrates success has demonstrated nothing.")
-ref = [
-    ("Non-admin cannot issue", "Role check", "AccessControl on AssetNFT"),
-    ("Non-admin cannot suspend", "Role check", "A different contract, same guard"),
-    ("Suspended identity cannot receive", "Lifecycle", "Status enforced at the chokepoint"),
-    ("Tampered document fails", "Cryptography", "Hash mismatch — no judgement involved"),
-]
-x = 0.75
-for t, kind, how in ref:
-    box(s, x, y+0.15, 2.85, 2.35, fill=WHITE, border=RED)
-    circ = s.shapes.add_shape(MSO_SHAPE.OVAL, In(x+0.25), In(y+0.4), In(0.42), In(0.42))
-    circ.fill.solid(); circ.fill.fore_color.rgb = REDBG; circ.line.color.rgb = RED; circ.shadow.inherit=False
-    txt(s, x+0.25, y+0.46, 0.42, 0.3, "✕", 15, True, RED, PP_ALIGN.CENTER)
-    txt(s, x+0.25, y+1.0, 2.4, 0.6, t, 14, True, INK, line=1.2)
-    txt(s, x+0.25, y+1.72, 2.4, 0.25, kind.upper(), 10, True, ACC)
-    txt(s, x+0.25, y+1.98, 2.4, 0.4, how, 10.5, False, MUTE, line=1.2)
-    x += 2.98
-crop_pic(s, "08-rejection.png", 0.75, y+2.72, 7.4, 1.78, bottom=0.55)
-box(s, 8.35, y+2.72, 4.25, 1.78, fill=BLACK, border=None)
-txt(s, 8.6, y+2.94, 3.8, 1.4,
-    "The rejection is shown on screen with the contract's own reason —\nnot hidden in a console, and\nnot invented by the interface.", 13, False, WHITE, line=1.32)
-note(s, "")
-
-# ══════════════════════════════════════════ 15 — PROOF
-s = slide()
-y = header(s, "Speaker 4 · Proof", "\"That red banner could be an if-statement\"",
-           "A fair objection. So we answer it with the application switched off.")
-box(s, 0.75, y+0.15, 11.85, 3.5, fill=BLACK, border=None)
-txt(s, 1.05, y+0.4, 11.3, 0.3, "$ npx hardhat run scripts/prove-it.ts --network localhost", 13, True, ACC)
-term = [
-    ("  2. Contractor tries to issue equipment, bypassing the UI completely", RGBColor(0xD6,0xD3,0xCD), True),
-    ("     ✓ REFUSED BY THE CONTRACT — AccessControlUnauthorizedAccount(0x90F7…b906, 0xa498…1775)", GRN, False),
-    ("  4. An asset cannot escape to an address the organisation never registered", RGBColor(0xD6,0xD3,0xCD), True),
-    ("     ✓ REFUSED — Recipient not an active identity   (raw ERC-721 transfer path)", GRN, False),
-    ("  5. A revoked identity is finished — even for the admin", RGBColor(0xD6,0xD3,0xCD), True),
-    ("     ✓ Even the ADMIN cannot issue to a revoked identity", GRN, False),
-    ("  6. Tampered paperwork fails, and it fails on arithmetic", RGBColor(0xD6,0xD3,0xCD), True),
-    ("     original document -> AUTHENTIC     one word changed -> REJECTED", GRN, False),
-]
-for i, (line_, col, bold) in enumerate(term):
-    tb = txt(s, 1.05, y+0.85+i*0.32, 11.3, 0.28, line_, 11.5, bold, col)
-    tb.text_frame.paragraphs[0].runs[0].font.name = "Consolas"
-txt(s, 1.05, y+3.42, 11.3, 0.3, "Every refusal came from contract bytecode. The web app was never running.", 13, True, ACC)
-box(s, 0.75, y+3.85, 11.85, 0.85, fill=SOFT, border=LINE)
-txt(s, 1.05, y+4.02, 11.3, 0.5,
-    "The strongest line is number 5. The account that is refused holds every administrative privilege in the system.\nA database administrator can always override the database. Here, nobody can.", 13.5, True, INK, line=1.3)
-note(s, "")
-
-# ══════════════════════════════════════════ 16 — TESTING
-s = slide()
-y = header(s, "Speaker 4 · Assurance", "What we can actually evidence",
-           "Claims are cheap. These are the numbers behind them.")
-stats = [("45", "contract tests\npassing"), ("3", "exploits found\nand closed"),
-         ("4", "distinct on-chain\nrefusals"), ("0", "console errors\nin the demo path")]
-x = 0.75
-for n, lab in stats:
-    box(s, x, y+0.15, 2.85, 1.65, fill=WHITE, border=LINE)
-    txt(s, x, y+0.35, 2.85, 0.65, n, 42, True, INK, PP_ALIGN.CENTER)
-    txt(s, x, y+1.12, 2.85, 0.5, lab, 11.5, False, MUTE, PP_ALIGN.CENTER, line=1.2)
-    x += 2.98
-txt(s, 0.75, y+2.1, 11.85, 0.3, "Negative tests — the ones that matter", 16, True, INK)
-neg = [
-    ("Signature replay", "A used proof cannot be presented twice"),
-    ("Impersonation", "Another key's signature does not prove control"),
-    ("Expired challenge", "A proof past its deadline is refused"),
-    ("Revoked identity", "Cannot prove control, cannot receive assets"),
-    ("Unregistered recipient", "Blocked on every transfer path, including raw ERC-721"),
-    ("Document tampering", "A single altered byte fails integrity verification"),
-]
-for i, (t, d) in enumerate(neg):
-    xx = 0.75 + (i % 2) * 6.05
-    yy = y + 2.55 + (i // 2) * 0.72
-    box(s, xx, yy, 5.8, 0.62, fill=SOFT, border=None)
-    txt(s, xx+0.22, yy+0.09, 2.3, 0.25, t, 12.5, True, INK)
-    txt(s, xx+2.55, yy+0.11, 3.1, 0.4, d, 11, False, MUTE, line=1.2)
-note(s, "Threat model, requirement traceability and the full audit are committed in the repository.")
-
-# ══════════════════════════════════════════ 17 — IMPACT
-s = slide()
-y = header(s, "Speaker 5 · Impact", "Who this changes the day for",
-           "Four roles, four different problems solved by the same record.")
-imp = [
-    ("Security administrator", "Revocation is immediate and cannot be bypassed — including by them.", BLU),
-    ("Stores / custody officer", "One verifiable record instead of a register and paperwork that disagree.", GRN),
-    ("Internal auditor", "Reconstructs the full history without trusting the system operator.", RGBColor(0xC9,0x8A,0x2E)),
-    ("External verifier", "Confirms authenticity and custody with no account and no login.", INK),
-]
-for i, (who, what, col) in enumerate(imp):
-    yy = y + 0.2 + i*0.95
-    bar = box(s, 0.75, yy, 0.09, 0.78, fill=col, border=None)
-    txt(s, 1.05, yy+0.05, 4.0, 0.3, who, 16, True, INK)
-    txt(s, 5.2, yy+0.1, 7.4, 0.55, what, 13.5, False, MUTE, line=1.25)
-box(s, 0.75, y+4.15, 11.85, 0.85, fill=BLACK, border=None)
-txt(s, 1.05, y+4.32, 11.3, 0.5,
-    "Operationally, the win is offboarding: the gap that opens every time somebody leaves, and closes here the moment\ntheir identity is revoked.", 14, False, WHITE, line=1.3)
-note(s, "")
-
-# ══════════════════════════════════════════ 18 — BUILT VS NEXT
-s = slide()
-y = header(s, "Speaker 5 · Honest Status", "What is built, and what is not",
-           "We would rather tell you the boundary than have you find it.")
-box(s, 0.75, y+0.15, 5.8, 4.2, fill=GRNBG, border=GRN)
-txt(s, 1.05, y+0.4, 5.2, 0.3, "BUILT, TESTED AND DEMONSTRABLE", 11, True, GRN)
-for i, it in enumerate([
-    "Identity registration and lifecycle",
-    "Suspension, revocation, key rotation",
-    "Role-based access, enforced on-chain",
-    "ERC-721 asset custody with identity binding",
-    "EIP-712 cryptographic proof of control",
-    "Asset verification and document integrity",
-    "Live audit trail from chain events",
-    "Six-stage custody pipeline, end to end",
-]):
-    txt(s, 1.05, y+0.8+i*0.42, 0.25, 0.3, "✓", 13, True, GRN)
-    txt(s, 1.38, y+0.8+i*0.42, 4.9, 0.35, it, 12.5, False, INK)
-box(s, 6.8, y+0.15, 5.8, 4.2, fill=SOFT, border=LINE)
-txt(s, 7.1, y+0.4, 5.2, 0.3, "NOT BUILT — AND WHY", 11, True, MUTE)
-for i, (it, why) in enumerate([
-    ("Wallet authentication", "Demo uses local keys; production needs wallet-connect"),
-    ("Multi-signature admin", "One key holds full authority today"),
-    ("W3C DID documents", "Identity formatting, layered on a correct permission system"),
-    ("Off-chain document store", "We anchor hashes; production needs the store itself"),
-    ("Failed-attempt logging", "A revert rolls back its own events by design"),
-    ("Permissioned chain deploy", "Local node chosen for demo reliability"),
-]):
-    yy = y+0.8+i*0.62
-    txt(s, 7.1, yy, 5.2, 0.25, it, 12.5, True, INK)
-    txt(s, 7.1, yy+0.24, 5.2, 0.3, why, 10.5, False, MUTE, line=1.15)
-note(s, "Everything on the right is sequenced in the roadmap, not discovered late.")
-
-# ══════════════════════════════════════════ 19 — FEASIBILITY
-s = slide()
-y = header(s, "Speaker 5 · Path to Production", "From this prototype to a deployable system",
-           "Nothing here requires new research — only engineering already scoped.")
-phases = [
-    ("NOW", "Working prototype", ["Two contracts, 45 tests","Full workflow interface","Local permissioned chain"], GRN),
-    ("NEXT", "Pilot-ready", ["Wallet authentication","Multi-signature admin","Off-chain document store"], BLU),
-    ("THEN", "Deployed", ["Hyperledger Besu / Quorum","Event indexer for scale","Integration with existing register"], RGBColor(0xC9,0x8A,0x2E)),
-    ("LATER", "Extended", ["W3C DID / verifiable credentials","Tamper-evident physical tagging","Cross-site federation"], MUTE),
-]
-x = 0.75
-for i, (when, what, items, col) in enumerate(phases):
-    box(s, x, y+0.4, 2.85, 2.9, fill=WHITE, border=col)
-    tag = box(s, x, y+0.4, 2.85, 0.4, fill=col, border=None)
-    txt(s, x, y+0.47, 2.85, 0.3, when, 12, True, WHITE, PP_ALIGN.CENTER)
-    txt(s, x+0.22, y+0.95, 2.4, 0.3, what, 15, True, INK)
-    for j, it in enumerate(items):
-        txt(s, x+0.22, y+1.4+j*0.55, 2.45, 0.5, "· " + it, 11.5, False, MUTE, line=1.2)
-    if i < 3: arrow(s, x+2.9, y+1.75, 0.28)
-    x += 3.05
-box(s, 0.75, y+3.6, 11.85, 0.95, fill=SOFT, border=LINE)
-txt(s, 1.05, y+3.78, 11.3, 0.6,
-    "Adoption is incremental. The system can run alongside an existing asset register — writing the same events to a\nrecord nobody can edit — long before it replaces anything.", 13.5, False, INK, line=1.3)
-note(s, "")
-
-# ══════════════════════════════════════════ 20 — CLOSE
-s = slide()
-box(s, 0, 0, W, 7.5, fill=BLACK, border=None)
-txt(s, 1.1, 1.3, 11.2, 0.35, "WHY BLOCKCHAIN, IN ONE ANSWER", 12, True, ACC)
-txt(s, 1.1, 1.85, 11.2, 1.8,
-    "A database could draw every screen\nwe just showed you.", 34, True, WHITE, line=1.22)
-txt(s, 1.1, 3.35, 11.2, 1.8,
-    "What it cannot do is be trustworthy to\nsomeone who does not trust its operator.", 34, True, ACC, line=1.22)
-box(s, 1.1, 5.15, 11.1, 0.055, fill=RGBColor(0x46,0x43,0x3E), border=None)
-txt(s, 1.1, 5.45, 11.2, 0.9,
-    "That is why the verification screen needs no login, why the auditor does not depend on our copy,\nand why the administrator who built the system still cannot override it.", 14.5, False, RGBColor(0xD6,0xD3,0xCD), line=1.35)
-txt(s, 1.1, 6.65, 11.2, 0.3, "ChainID Vault  ·  SIH26125  ·  github.com/tohraan/chainid-vault", 12, True, RGBColor(0xA3,0xA0,0x99))
+# ══════════════════ 15 HONEST CLAIM + CLOSE
+s=slide()
+y=head(s,"Speaker 5 · Close","What we can honestly claim, and what we cannot")
+box(s,0.75,y+0.1,5.8,2.7,fill=GRNBG,border=GRN)
+txt(s,1.05,y+0.32,5.2,0.3,"BUILT AND VERIFIED",11,True,GRN)
+for i,t in enumerate(["Identity lifecycle — create, suspend, revoke, rotate",
+                      "Permissions enforced by the system itself",
+                      "Asset custody bound to an active identity",
+                      "Independent verification, no login required",
+                      "45 automated tests · 3 flaws found and fixed"]):
+    txt(s,1.05,y+0.7+i*0.4,0.22,0.3,"✓",13,True,GRN)
+    txt(s,1.35,y+0.7+i*0.4,4.95,0.35,t,12.5,False,INK,line=1.2)
+box(s,6.75,y+0.1,5.85,2.7,fill=SOFT,border=LINE)
+txt(s,7.05,y+0.32,5.2,0.3,"WE ARE NOT CLAIMING",11,True,MUTE)
+for i,t in enumerate(["Measured reduction in inventory loss",
+                      "Measured reduction in breaches",
+                      "Deployment inside BEL",
+                      "Production-scale field results",
+                      "That we have solved trust — only that we made it checkable"]):
+    txt(s,7.05,y+0.7+i*0.4,0.22,0.3,"—",13,True,MUTE)
+    txt(s,7.35,y+0.7+i*0.4,5.0,0.35,t,12.5,False,INK,line=1.2)
+box(s,0.75,y+3.0,11.85,1.35,fill=BLACK,border=None)
+txt(s,1.05,y+3.2,11.3,0.35,"So — who can prove who controls this asset right now?",17,True,RGBColor(0xD6,0xD3,0xCD))
+txt(s,1.05,y+3.6,11.3,0.6,"Don't just record what happened. Make it provable.",30,True,ACC)
+note(s,"Stop here. Do not say \"thank you, any questions\". Let it land.")
 
 prs.save(OUT)
-print("saved", OUT, "slides:", len(prs.slides.__iter__.__self__._sldIdLst))
+print("saved:", OUT, "slides:", len(Presentation(OUT).slides))
