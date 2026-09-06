@@ -177,7 +177,43 @@ txt(s,1.05,y+2.66,11.3,0.65,"More contractors, more sites, more handoffs between
 txt(s,0.75,y+3.75,11.85,0.4,"The problem was never the warehouse. It was that no party could prove which record was correct.",16,True,RED)
 note(s,"")
 
-# ══════════════════ 6 THREE QUESTIONS
+# ══════════════════ 6 PRECEDENT — this is not new
+s=slide()
+y=head(s,"Speaker 2 · Precedent","We did not invent this. That is the argument.",
+       "The same mechanism — tamper-evident records, checkable by someone outside — already runs in production.")
+box(s,0.75,y+0.05,11.85,0.36,fill=BLACK,border=None)
+txt(s,1.0,y+0.12,3.1,0.24,"WHERE",10.5,True,ACC)
+txt(s,4.3,y+0.12,4.3,0.24,"WHAT IT PROVED",10.5,True,WHITE)
+txt(s,9.0,y+0.12,3.5,0.24,"DOCUMENTED RESULT",10.5,True,WHITE)
+rows=[("Walmart · IBM Food Trust",
+       "Trace one item's full history across many\nhandlers, on Hyperledger Fabric",
+       "Trace time fell from\n7 days to 2.2 seconds",GRN),
+      ("US DoD · Defense Logistics Agency",
+       "Authorisation, authentication and traceability\nof parts with the Navy and Air Force",
+       "Active programme.\nNo published figures yet.",MUTE),
+      ("Government of India · NITI Aayog",
+       "\"Blockchain: The India Strategy\" (2020); land\nrecord pilots in Chandigarh and Andhra Pradesh",
+       "Policy precedent —\nthe approach is accepted here",BLU)]
+yy=y+0.41
+for i,(w,pv,res,col) in enumerate(rows):
+    box(s,0.75,yy,11.85,0.72,fill=WHITE if i%2==0 else SOFT,border=LINE)
+    txt(s,1.0,yy+0.22,3.2,0.4,w,12.5,True,INK,line=1.12)
+    txt(s,4.3,yy+0.15,4.5,0.55,pv,11,False,MUTE,line=1.18)
+    txt(s,9.0,yy+0.15,3.5,0.55,res,12,True,col,line=1.18)
+    yy+=0.72
+box(s,0.75,yy+0.12,11.85,0.72,fill=REDBG,border=RED)
+txt(s,1.0,yy+0.2,5.4,0.24,"AND THE ONE THAT FAILED",10,True,RED)
+txt(s,1.0,yy+0.44,5.5,0.24,"TradeLens (Maersk + IBM) shut down 2023 — competitors would not share data.",11.5,False,INK)
+txt(s,6.9,yy+0.2,5.6,0.24,"WHY THAT FAILURE MODE IS NOT OURS",10,True,GRN)
+txt(s,6.9,yy+0.44,5.6,0.24,"One organisation records its own custody chain. No rival has to agree to anything.",11.5,True,INK)
+box(s,0.75,yy+0.94,11.85,1.0,fill=BLACK,border=None)
+txt(s,1.0,yy+1.08,11.4,0.24,"THE KPI THAT MOVED THERE, AND ITS EQUIVALENT HERE",10,True,ACC)
+txt(s,1.0,yy+1.34,5.4,0.5,"Walmart asked: how long to trace one item's full\nhistory? Seven days became 2.2 seconds.",12,False,RGBColor(0xD6,0xD3,0xCD),line=1.22)
+arrow(s,6.6,yy+1.45,0.4,0.18,ACC)
+txt(s,7.2,yy+1.34,5.3,0.5,"We ask it of custody: who holds this, and is the\nrecord intact? A manual check today — a read here.",12,True,WHITE,line=1.22)
+note(s,"Same mechanism, same class of result — but we have not measured ours in the field, and we are not borrowing their number.")
+
+# ══════════════════ 7 THREE QUESTIONS
 s=slide()
 y=head(s,"Speaker 2 · The insight","Every critical action comes down to three questions")
 qs=[("WHO ARE YOU?","Identity","Is this a real, currently valid person — not just a card?",BLU),
@@ -194,7 +230,7 @@ for q,tag,d,col in qs:
 txt(s,0.75,yy+0.12,11.85,0.4,"Miss any one and the action cannot be trusted. We built ChainID Vault around exactly these three.",17,True,INK)
 note(s,"The gate answered all three badly. So does most enterprise software.")
 
-# ══════════════════ 7 WHAT IT IS
+# ══════════════════ 8 WHAT IT IS
 s=slide()
 y=head(s,"Speaker 3 · The solution","ChainID Vault: verify the identity, enforce the permission, prove the action")
 box(s,0.75,y+0.1,11.85,1.15,fill=BLACK,border=None)
@@ -213,7 +249,7 @@ box(s,0.75,y+3.6,11.85,0.62,fill=SOFT,border=LINE)
 txt(s,1.05,y+3.76,11.3,0.35,"Notice what we have not mentioned yet: any technology at all.",15,True,MUTE)
 note(s,"")
 
-# ══════════════════ 8 THE ACTION FLOW
+# ══════════════════ 9 THE ACTION FLOW
 s=slide()
 y=head(s,"Speaker 3 · How it works","What happens the moment somebody acts",
        "The diagram follows the action, not the components.")
@@ -238,7 +274,7 @@ note(s,"")
 
 prs.save(OUT); print("part 1 done:", len(prs.slides.__iter__.__self__._sldIdLst))
 
-# ══════════════════ 9 WHY BLOCKCHAIN
+# ══════════════════ 10 WHY BLOCKCHAIN
 s=slide()
 y=head(s,"Speaker 3 · The technology choice","Blockchain is where we keep the proof, not the files",
        "One job, precisely defined. We are not claiming it is better at everything.")
@@ -264,7 +300,7 @@ for t,col,bg,items,foot in cols:
 arrow(s,4.68,y+2.6,0.28,0.18,INK); arrow(s,8.73,y+2.6,0.28,0.18,INK)
 note(s,"Runs today on a local chain. The deployment target is a permissioned network such as Hyperledger Besu.")
 
-# ══════════════════ 10 DEMO — REFUSE
+# ══════════════════ 11 DEMO — REFUSE
 s=slide()
 y=head(s,"Speaker 4 · Demo","Watch the system refuse something it should refuse",
        "The contractor from slide 3. Engagement ended, identity revoked.")
@@ -280,7 +316,7 @@ box(s,0.75,y+3.35,11.85,1.0,fill=REDBG,border=RED)
 txt(s,1.05,y+3.55,11.3,0.65,"The account that just tried holds every privilege in this system. It created that identity. It issued the original\nequipment. It still cannot do this. A database administrator can always override the database. Here, nobody can.",15,True,RED,line=1.3)
 note(s,"Pause here. Let it sit before moving on.")
 
-# ══════════════════ 11 DEMO — ALLOW + PROOF
+# ══════════════════ 12 DEMO — ALLOW + PROOF
 s=slide()
 y=head(s,"Speaker 4 · Demo","Now watch it allow something it should allow",
        "Same action. Active identity, correct permission.")
@@ -292,7 +328,7 @@ box(s,0.75,y+3.55,11.85,0.85,fill=SOFT,border=LINE)
 txt(s,1.05,y+3.73,11.3,0.5,"Nobody decided the second one was fake. Two fingerprints differ. That is arithmetic, not judgement —\nand this screen has no login, so someone who does not trust us can still run the check.",15,True,INK,line=1.3)
 note(s,"One thing absent from the history: the refused attempts. Nothing was allowed to happen, so nothing was recorded.")
 
-# ══════════════════ 12 WE ATTACKED IT
+# ══════════════════ 13 WE ATTACKED IT
 s=slide()
 y=head(s,"Speaker 5 · Credibility","We attacked our own system and it broke",
        "A red banner in our own interface proves nothing. So we switched the interface off.")
@@ -320,7 +356,7 @@ box(s,0.75,y+2.85,11.85,0.9,fill=SOFT,border=LINE)
 txt(s,1.05,y+3.05,11.3,0.5,"We did not only test that valid actions work. We tested that invalid ones are stopped —\nreplay, impersonation, expired proofs, revoked identities, tampered documents.",15,True,INK,line=1.3)
 note(s,"")
 
-# ══════════════════ 13 WHAT CHANGES
+# ══════════════════ 14 WHAT CHANGES
 s=slide()
 y=head(s,"Speaker 5 · The shift","From trusting records to proving them")
 pairs=[("\"The system says this happened.\"","\"The record can be independently checked.\""),
@@ -339,7 +375,7 @@ box(s,0.75,yy+0.15,11.85,0.8,fill=BLACK,border=None)
 txt(s,1.05,yy+0.33,11.3,0.45,"What changes is not the screens. It is who has to be trusted for the record to mean anything.",16,True,WHITE)
 note(s,"No percentages here. We have not measured any, and we will not invent them.")
 
-# ══════════════════ 14 HONEST CLAIM + CLOSE
+# ══════════════════ 15 HONEST CLAIM + CLOSE
 s=slide()
 y=head(s,"Speaker 5 · Close","What we can honestly claim, and what we cannot")
 box(s,0.75,y+0.1,5.8,2.7,fill=GRNBG,border=GRN)
